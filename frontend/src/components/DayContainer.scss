@@ -1,0 +1,62 @@
+.daycontainer {
+  width: 150px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+  background-color: gray;
+
+  .hour-block {
+    flex: 1; // evenly split among 10 blocks
+    min-height: 0; // allow flex-shrink
+    border-bottom: 1px solid #222;
+    display: flex;
+    flex-direction: column;
+
+    &.has-multi-hour-start {
+      border-bottom: none; // remove for multi-hour start
+    }
+
+    .hour-label {
+      flex: 0; // only take space needed
+      font-size: 12px;
+      font-weight: bold;
+      padding: 2px;
+    }
+
+    .events {
+      flex: 1; // fill remaining height
+      display: flex;
+      flex-direction: row;
+      gap: 2px;
+      min-height: 0; // allow shrink
+
+      .event-card {
+        font-size: 12px;
+        flex-direction: column;
+        flex: 1; // take equal width
+        background-color: orange;
+        min-height: 0; // critical to prevent growing
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        padding: 2px;
+      }
+
+      .empty {
+        flex: 1;
+        min-height: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        color: #666;
+      }
+    }
+  }
+
+  .hour-block:last-child {
+    border-bottom: none;
+  }
+}
