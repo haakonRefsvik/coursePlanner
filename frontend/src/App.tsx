@@ -5,6 +5,7 @@ import type { Course } from "./types/Course";
 import { WeekContainer } from "./components/WeekContainer";
 import { WeekSelector } from "./components/WeekSelector";
 import { getNextColor } from "./utils/getNextColor";
+import { getCollidingEvents } from "./utils/getCollidingEvents";
 
 function App() {
   const [courseInput, setCourseInput] = useState("");
@@ -50,6 +51,10 @@ function App() {
     (_, i) => firstWeekNr + i
   );
 
+  const allEvents = coursesAdded.flatMap((course) => course.events);
+  const c = getCollidingEvents(allEvents);
+  console.log(c);
+
   return (
     <>
       <div className="card">
@@ -93,7 +98,7 @@ function App() {
             showLessons={checkFor}
             showOther={checkAnn}
             weekNumber={weekSelected}
-            events={coursesAdded.flatMap((course) => course.events)}
+            events={allEvents}
           ></WeekContainer>
         </div>
       </div>

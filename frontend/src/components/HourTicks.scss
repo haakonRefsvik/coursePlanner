@@ -1,0 +1,27 @@
+.hourticks {
+  width: 50px;
+  height: 500px;
+  display: flex;
+  flex-direction: column;
+
+  .hour-block {
+    flex: 1; // evenly split among 10 blocks
+    min-height: 0; // allow flex-shrink
+    align-items: flex-end; // push content to the right
+    border-top: 1px solid gray;
+    display: flex;
+    justify-content: flex-start; // push content to the top
+    flex-direction: column;
+    height: 10px;
+  }
+
+  .hour-text {
+    height: fit-content; // fine, but not needed in most cases
+    color: gray;
+    margin: 0; // remove default margins
+    margin-top: 5px;
+    padding: 0; // remove padding if any
+    line-height: 1; // keeps text compact (can tweak e.g. 1.2)
+    display: inline-block; // shrink-wraps the content
+  }
+}

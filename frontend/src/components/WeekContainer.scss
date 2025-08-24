@@ -1,5 +1,6 @@
-.weekcontainer{
-    display: flex;
-    flex-direction: row;
-    gap: 10px;
+.weekcontainer {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 10px;
 }
