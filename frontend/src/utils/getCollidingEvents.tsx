@@ -1,7 +1,9 @@
 import type { Event } from "../types/Course";
 
-export function getCollidingEvents(events: Event[]): Event[] {
-  const collisions: Event[] = [];
+export type EventPair = [Event, Event]; // a tuple of two events
+
+export function getCollidingEvents(events: Event[]): EventPair[] {
+  const collisions: EventPair[] = [];
   const seen = [];
 
   for (const event of events) {
@@ -13,7 +15,7 @@ export function getCollidingEvents(events: Event[]): Event[] {
     );
 
     if (c !== undefined) {
-      collisions.push(c);
+      collisions.push([event, c]);
     }
 
     seen.push(event);

@@ -52,8 +52,7 @@ function App() {
   );
 
   const allEvents = coursesAdded.flatMap((course) => course.events);
-  const c = getCollidingEvents(allEvents);
-  console.log(c);
+  const collidingEvents = getCollidingEvents(allEvents);
 
   return (
     <>
@@ -90,6 +89,7 @@ function App() {
         </div>
         <div>
           <WeekSelector
+            collidingEvents={collidingEvents}
             weeks={allWeekNr}
             selectedWeek={weekSelected}
             onChange={(week) => setWeekSelected(week)}
