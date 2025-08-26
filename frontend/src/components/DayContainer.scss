@@ -3,12 +3,13 @@
   height: 500px;
   display: flex;
   flex-direction: column;
-  background-color: gray;
+  background-color: "#1a1a1a";
+  border-right: 1px dashed gray;
 
   .hour-block {
     flex: 1; // evenly split among 10 blocks
     min-height: 0; // allow flex-shrink
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid gray;
     display: flex;
     flex-direction: column;
 
@@ -31,6 +32,8 @@
       min-height: 0; // allow shrink
 
       .event-card {
+        margin: 2px;
+        border-radius: 5px;
         font-size: 12px;
         flex-direction: column;
         flex: 1; // take equal width
@@ -38,10 +41,11 @@
         min-height: 0; // critical to prevent growing
         overflow: hidden;
         display: flex;
-        align-items: center;
+        align-items: start;
         justify-content: center;
         text-align: center;
         padding: 2px;
+        margin-right: 10px;
       }
 
       .empty {
@@ -53,10 +57,39 @@
         font-size: 11px;
         color: #666;
       }
+
+      .eventcontainer {
+        justify-content: flex-start;
+        display: flex;
+        flex-direction: row;
+      }
     }
+  }
+
+  .thumb {
+    width: 6px;
+    height: 80%;
+    border-radius: 5px;
+    align-self: center;
+    margin-right: 5px;
+    margin-left: 5px;
   }
 
   .hour-block:last-child {
     border-bottom: none;
+  }
+
+  .coursetitle {
+    width: fit-content;
+  }
+
+  .courseinfo {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+  }
+
+  .coursemethod {
+    width: fit-content;
   }
 }

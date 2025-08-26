@@ -38,12 +38,24 @@ export function DayContainer({ events }: DayContainerProps) {
                   <div
                     key={e.id}
                     className={`event-card ${isStart ? "start" : "continuation"}`}
-                    style={{ backgroundColor: e.color }}
+                    style={{ backgroundColor: "gray" }}
                   >
                     {isStart && (
                       <>
-                        <strong>{e.courseid}</strong>
-                        <div>{e.teachingMethod}</div>
+                        <div className="eventcontainer">
+                          <div
+                            className="thumb"
+                            style={{ backgroundColor: e.color }}
+                          ></div>
+                          <div className="courseinfo">
+                            <strong className="coursetitle">
+                              {e.courseid}
+                            </strong>
+                            <div className="coursemethod">
+                              {e.teachingMethod}
+                            </div>
+                          </div>
+                        </div>
                       </>
                     )}
                   </div>

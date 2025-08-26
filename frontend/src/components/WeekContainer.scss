@@ -2,5 +2,9 @@
   display: flex;
   flex-direction: row;
   align-items: flex-end;
-  gap: 10px;
+
+  .date {
+    color: gray;
+    font-weight: 300;
+  }
 }

@@ -1,6 +1,6 @@
 import type { Event } from "../types/Course";
 import { getEventsForADay } from "../utils/getEventsForADay";
-import { getDatesForWeek } from "../utils/parseDate";
+import { formatDateToDayMonth, getDatesForWeek } from "../utils/parseDate";
 import { DayContainer } from "./DayContainer";
 import { HourTicks } from "./HourTicks";
 import "./WeekContainer.scss";
@@ -26,8 +26,8 @@ export function WeekContainer({
           <HourTicks from={8} to={17}></HourTicks>
         </div>
         {dates.map((date) => (
-          <div>
-            <p>{date}</p>
+          <div key={date}>
+            <p className="date">{formatDateToDayMonth(date)}</p>
             <DayContainer
               key={date}
               events={getEventsForADay(date, events, showLessons, showOther)}

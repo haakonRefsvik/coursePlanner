@@ -35,22 +35,30 @@
 
 .card {
   padding: 2em;
+  display: flex;
+  flex-direction: row;
 }
 
-.header{
+.header {
   display: flex;
   align-items: center;
   justify-content: start;
-  gap: 10px; 
+  gap: 10px;
   margin-bottom: 20px;
 }
 
-.loader-container { 
-  height: 20px;     
+.loader-container {
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: gray
+  color: gray;
+}
+
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  margin-right: 50px;
 }
 
 .checkbox-group {

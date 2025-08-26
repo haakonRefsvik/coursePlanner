@@ -3,6 +3,7 @@
   height: 500px;
   display: flex;
   flex-direction: column;
+  margin-right: 10px;
 
   .hour-block {
     flex: 1; // evenly split among 10 blocks

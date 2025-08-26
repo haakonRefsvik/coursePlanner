@@ -6,7 +6,7 @@ export function HourTicks({ from, to }: { from: number; to: number }) {
   return (
     <div className="hourticks">
       {hours.map((hour) => (
-        <div className="hour-block">
+        <div className="hour-block" key={hour}>
           <p className="hour-text" key={hour}>
             {hour}:00
           </p>

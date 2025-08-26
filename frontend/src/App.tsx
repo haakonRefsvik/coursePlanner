@@ -6,6 +6,7 @@ import { WeekContainer } from "./components/WeekContainer";
 import { WeekSelector } from "./components/WeekSelector";
 import { getNextColor } from "./utils/getNextColor";
 import { getCollidingEvents } from "./utils/getCollidingEvents";
+import { CourseOverview } from "./components/CourseOverview";
 
 function App() {
   const [courseInput, setCourseInput] = useState("");
@@ -57,14 +58,16 @@ function App() {
   return (
     <>
       <div className="card">
-        <div className="header">
-          <input
-            type="text"
-            value={courseInput}
-            onChange={(e) => setCourseInput(e.target.value)}
-            placeholder="Kurskode"
-          />
-          <button onClick={() => addCourse(courseInput)}>Legg til</button>
+        <div className="dashboard">
+          <div className="header">
+            <input
+              type="text"
+              value={courseInput}
+              onChange={(e) => setCourseInput(e.target.value)}
+              placeholder="Kurskode"
+            />
+            <button onClick={() => addCourse(courseInput)}>Legg til</button>
+          </div>
           <div className="checkbox-group">
             <label>
               <input
@@ -86,6 +89,12 @@ function App() {
           <div className="loader-container">
             {loading ? <p>Laster ...</p> : null}
           </div>
+          <CourseOverview
+            courses={coursesAdded}
+            onRemoveCOurse={(id) =>
+              setCoursesAdded((prev) => prev.filter((c) => c.id !== id))
+            }
+          ></CourseOverview>
         </div>
         <div>
           <WeekSelector
