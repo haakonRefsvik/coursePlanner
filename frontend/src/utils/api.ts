@@ -15,6 +15,8 @@ export async function fetchCourse(id: string): Promise<Course> {
     events: data.events.map(
       (e: any): Event => ({
         id: e.id,
+        widthPercent: 100,
+        leftOffset: 0,
         party: e.party,
         color: "",
         courseid: e.courseid,

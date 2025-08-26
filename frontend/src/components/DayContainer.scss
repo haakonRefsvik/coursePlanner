@@ -1,95 +1,34 @@
 .daycontainer {
-  width: 150px;
-  height: 500px;
+  position: relative; /* allows absolute positioning inside */
+  width: 200px;
+}
+
+.hour {
+  height: 50px; /* fixed height for each hour */
+  border: 1px solid #ccc;
+  padding: 8px;
+  box-sizing: border-box;
+}
+
+.event {
+  position: absolute; /* sits on top of hour divs */
+  background-color: gray;
+  box-sizing: border-box;
+  border-radius: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
   display: flex;
-  flex-direction: column;
-  background-color: "#1a1a1a";
-  border-right: 1px dashed gray;
+  flex-direction: row;
+  justify-content: flex-start;
+}
 
-  .hour-block {
-    flex: 1; // evenly split among 10 blocks
-    min-height: 0; // allow flex-shrink
-    border-bottom: 1px solid gray;
-    display: flex;
-    flex-direction: column;
-
-    &.has-multi-hour-start {
-      border-bottom: none; // remove for multi-hour start
-    }
-
-    .hour-label {
-      flex: 0; // only take space needed
-      font-size: 12px;
-      font-weight: bold;
-      padding: 2px;
-    }
-
-    .events {
-      flex: 1; // fill remaining height
-      display: flex;
-      flex-direction: row;
-      gap: 2px;
-      min-height: 0; // allow shrink
-
-      .event-card {
-        margin: 2px;
-        border-radius: 5px;
-        font-size: 12px;
-        flex-direction: column;
-        flex: 1; // take equal width
-        background-color: orange;
-        min-height: 0; // critical to prevent growing
-        overflow: hidden;
-        display: flex;
-        align-items: start;
-        justify-content: center;
-        text-align: center;
-        padding: 2px;
-        margin-right: 10px;
-      }
-
-      .empty {
-        flex: 1;
-        min-height: 0;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 11px;
-        color: #666;
-      }
-
-      .eventcontainer {
-        justify-content: flex-start;
-        display: flex;
-        flex-direction: row;
-      }
-    }
-  }
-
-  .thumb {
-    width: 6px;
-    height: 80%;
-    border-radius: 5px;
-    align-self: center;
-    margin-right: 5px;
-    margin-left: 5px;
-  }
-
-  .hour-block:last-child {
-    border-bottom: none;
-  }
-
-  .coursetitle {
-    width: fit-content;
-  }
-
-  .courseinfo {
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-  }
-
-  .coursemethod {
-    width: fit-content;
-  }
+.eventthumb {
+  width: 5px;
+  margin-left: 0px;
+  border-radius: 5px;
+  height: 80%;
+  align-self: center;
+  margin-right: 10px;
+  margin-left: 10px;
+  flex-shrink: 0;
 }

@@ -28,6 +28,8 @@ export interface Event {
   weeknr: number;
   color: string;
   party: string;
+  widthPercent: number;
+  leftOffset: number;
 }
 
 export interface Course {

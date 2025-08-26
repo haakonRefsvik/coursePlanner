@@ -1,67 +1,59 @@
 import "./DayContainer.scss";
 import type { Event } from "../types/Course";
+import { groupNonOverlappingEvents } from "../utils/eventMerger";
 
 type DayContainerProps = {
   events: Event[];
 };
 
 export function DayContainer({ events }: DayContainerProps) {
-  const hours = Array.from({ length: 10 }, (_, i) => i + 8);
+  const hourstart = 8;
+  const hours = Array.from({ length: 10 }, (_, i) => i + hourstart);
+  const hourPixelHeight = 50;
+  const dayPixelWidth = 200;
+  const eventGroups = groupNonOverlappingEvents(events);
+  console.log(eventGroups.length);
 
   return (
-    <div className="daycontainer">
-      {hours.map((hour) => {
-        const eventsThisHour = events.filter((e) => {
-          const startHour = new Date(e.dtstart).getHours();
-          const endHour = new Date(e.dtend).getHours();
-          return startHour < hour + 1 && endHour > hour;
-        });
+    <div className="daycontainer" style={{ width: `${dayPixelWidth}px` }}>
+      {hours.map((hour) => (
+        <div
+          key={hour}
+          className="hour"
+          style={{
+            height: `${hourPixelHeight}px`,
+            width: `${dayPixelWidth}px`,
+          }}
+        >
+          {hour}:00
+        </div>
+      ))}
+
+      {events.map((event) => {
+        const start = new Date(event.dtstart);
+        const end = new Date(event.dtend);
+        const eventHour = start.getHours();
+        const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
+        const durationPixelOffset = (hourPixelHeight / 60) * durationMinutes;
+        const minuteOffset = new Date(event.dtstart).getMinutes();
+        const minutePixelOffset = (hourPixelHeight / 60) * minuteOffset;
 
         return (
           <div
-            key={hour}
-            className={`hour-block ${
-              eventsThisHour.some(
-                (e) =>
-                  new Date(e.dtstart).getHours() === hour &&
-                  new Date(e.dtend).getHours() > hour + 1
-              )
-                ? "has-multi-hour-start"
-                : ""
-            }`}
+            key={event.id}
+            className="event"
+            style={{
+              top: `${(eventHour - hourstart) * hourPixelHeight + minutePixelOffset}px`,
+              height: `${durationPixelOffset}px`,
+              width: `${event.widthPercent * (dayPixelWidth / 100) - 5}px`,
+              left: `${event.leftOffset * event.widthPercent * (dayPixelWidth / 100) + 1}px`,
+            }} // position it over the hour
           >
-            <div className="events">
-              {eventsThisHour.map((e) => {
-                const startHour = new Date(e.dtstart).getHours();
-                const isStart = startHour === hour;
-                return (
-                  <div
-                    key={e.id}
-                    className={`event-card ${isStart ? "start" : "continuation"}`}
-                    style={{ backgroundColor: "gray" }}
-                  >
-                    {isStart && (
-                      <>
-                        <div className="eventcontainer">
-                          <div
-                            className="thumb"
-                            style={{ backgroundColor: e.color }}
-                          ></div>
-                          <div className="courseinfo">
-                            <strong className="coursetitle">
-                              {e.courseid}
-                            </strong>
-                            <div className="coursemethod">
-                              {e.teachingMethod}
-                            </div>
-                          </div>
-                        </div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
+            <div
+              className="eventthumb"
+              style={{ backgroundColor: `${event.color}` }}
+            ></div>
+            {event.courseid}
           </div>
         );
       })}
