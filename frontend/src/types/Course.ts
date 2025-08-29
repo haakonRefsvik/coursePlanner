@@ -16,6 +16,7 @@ export interface Room {
 
 export interface Event {
   id: string;
+  crashesWithEvents: Event[];
   eventid: string;
   courseid: string;
   title: string;

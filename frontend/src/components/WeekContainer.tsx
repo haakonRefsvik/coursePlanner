@@ -30,7 +30,7 @@ export function WeekContainer({
             <p className="date">{formatDateToDayMonth(date)}</p>
             <DayContainer
               key={date}
-              events={getEventsForADay(date, events, showLessons, showOther)}
+              events={getEventsForADay(date, events, true, true)}
             ></DayContainer>
           </div>
         ))}

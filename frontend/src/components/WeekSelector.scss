@@ -9,18 +9,23 @@
     border-radius: var(--container-radius);
     padding-left: 5px;
     padding-right: 5px;
-    font-size: 12px;
+    font-size: small;
     flex: 1 1 0;
 
     &.selected {
-      background-color: #007bff;
+      background-color: var(--button-hover-color);
       color: white;
       font-weight: bold;
-      border-color: #0056b3;
+      border-color: var(--button-hover-border-color);
     }
 
     &.collision {
-      background-color: red;
+      background-color: var(--red-dark);
+      color: white;
+    }
+
+    &.collision-selected {
+      background-color: var(--red);
       color: white;
     }
   }

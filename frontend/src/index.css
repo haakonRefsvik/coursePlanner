@@ -13,10 +13,19 @@
   -moz-osx-font-smoothing: grayscale;
 
   --gray: #242424;
-  --gray-lighter: rgb(43, 43, 43);
+  --gray-lighter: rgb(95, 95, 95);
+  --gray-lightest: rgb(163, 163, 163);
   --gray-darker: #1f1f1f;
+  --button-color: #151515;
+  --button-hover-color: #1f2d3b;
+  --button-hover-border-color: #0056b3;
+
+  --red: rgb(192, 109, 109);
+  --red-dark: rgb(111, 62, 62);
+
   --container-radius: 5px;
   --thumb-width: 5px;
+  --transitions: 0.25s;
 }
 
 a {
@@ -48,7 +57,7 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--button-color);
   cursor: pointer;
   transition: border-color 0.25s;
 }
@@ -61,11 +70,17 @@ input {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: gray;
+  background-color: var(--gray-lighter);
+}
+
+input:hover {
+  transition: border-color var(--transitions);
+  border-color: var(--button-hover-border-color);
 }
 
 button:hover {
-  border-color: #646cff;
+  background-color: var(--button-hover-color);
+  border-color: var(--button-hover-border-color);
 }
 button:focus,
 button:focus-visible {

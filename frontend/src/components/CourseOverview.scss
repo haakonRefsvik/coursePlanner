@@ -1,6 +1,6 @@
 .course {
   height: 50px;
-  background-color: gray;
+  background-color: var(--gray-lighter);
   border-radius: var(--container-radius);
   display: flex;
   flex-direction: row;
@@ -8,10 +8,30 @@
   align-items: center;
   margin-bottom: 20px;
 
-  .closebutton {
-    margin-left: auto;
-    margin-right: 20px;
+  .button-common {
     cursor: pointer;
+    color: var(--gray-lightest);
+    transition: color var(--transitions);
+    &:hover {
+      color: white;
+    }
+  }
+
+  .closebutton {
+    @extend .button-common;
+    margin-left: 10px;
+    margin-right: 10px;
+  }
+  .dropdownbutton {
+    @extend .button-common;
+    margin-left: 80px;
+    transition:
+      transform 0.3s ease,
+      color 0.3s ease;
+
+    &.toggled {
+      transform: rotate(180deg);
+    }
   }
 
   .coursetext {

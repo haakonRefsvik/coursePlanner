@@ -17,6 +17,7 @@ export async function fetchCourse(id: string): Promise<Course> {
         id: e.id,
         widthPercent: 100,
         leftOffset: 0,
+        crashesWithEvents: [],
         party: e.party,
         color: "",
         courseid: e.courseid,

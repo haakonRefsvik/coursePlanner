@@ -8,10 +8,7 @@ export function getCollidingEvents(events: Event[]): EventPair[] {
 
   for (const event of events) {
     const c = seen.find(
-      (e) =>
-        e.dtstart == event.dtstart &&
-        e.courseid !== event.courseid &&
-        event.teachingMethod === "Forelesninger"
+      (e) => e.dtstart == event.dtstart && e.courseid !== event.courseid
     );
 
     if (c !== undefined) {

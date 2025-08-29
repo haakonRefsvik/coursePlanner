@@ -52,8 +52,10 @@ export function DayContainer({ events }: DayContainerProps) {
               className="eventthumb"
               style={{ backgroundColor: `${event.color}` }}
             ></div>
-
-            <p className="eventtitle">{event.courseid}</p>
+            <div className="eventcontainer">
+              <p className="eventtitle">{event.courseid}</p>
+              <p className="eventcontent">{event.teachingMethod}</p>
+            </div>
           </div>
         );
       })}

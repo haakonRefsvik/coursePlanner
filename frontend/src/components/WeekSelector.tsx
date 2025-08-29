@@ -28,7 +28,8 @@ export function WeekSelector({
             onClick={() => onChange(week)}
             className={`
               ${isSelected ? "selected" : ""} 
-              ${hasCollision ? "collision" : ""}
+              ${hasCollision && isSelected ? "collision-selected" : ""}
+              ${hasCollision && !isSelected ? "collision" : ""}
             `}
           >
             {week}

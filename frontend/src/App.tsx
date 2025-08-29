@@ -8,6 +8,7 @@ import { getNextColor } from "./utils/getNextColor";
 import { getCollidingEvents } from "./utils/getCollidingEvents";
 import { CourseOverview } from "./components/CourseOverview";
 import { testEvents } from "./utils/dummyEvents";
+import { filterEvents } from "./utils/filterEvents";
 
 function App() {
   const [courseInput, setCourseInput] = useState("");
@@ -55,6 +56,7 @@ function App() {
 
   const allEvents = coursesAdded.flatMap((course) => course.events);
   const collidingEvents = getCollidingEvents(allEvents);
+  const filteredEvents = filterEvents(allEvents, checkFor, checkAnn);
 
   return (
     <>
@@ -108,7 +110,7 @@ function App() {
             showLessons={checkFor}
             showOther={checkAnn}
             weekNumber={weekSelected}
-            events={allEvents}
+            events={filteredEvents}
           ></WeekContainer>
         </div>
       </div>

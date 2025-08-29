@@ -3,6 +3,7 @@ import type { Event } from "../types/Course";
 export const testEvents: Event[] = [
   {
     id: "1",
+    crashesWithEvents: [],
     widthPercent: 100,
     leftOffset: 0,
     eventid: "E1",
@@ -20,6 +21,7 @@ export const testEvents: Event[] = [
   },
   {
     id: "2",
+    crashesWithEvents: [],
     widthPercent: 100,
     leftOffset: 0,
     eventid: "E2",
@@ -40,6 +42,7 @@ export const testEvents: Event[] = [
     widthPercent: 100,
     leftOffset: 0,
     eventid: "E3",
+    crashesWithEvents: [],
     courseid: "C3",
     title: "Event 3",
     summary: "14:00–16:30",
@@ -58,6 +61,7 @@ export const testEvents: Event[] = [
     leftOffset: 0,
     eventid: "E3",
     courseid: "C4",
+    crashesWithEvents: [],
     title: "Event 3",
     summary: "14:00–16:30",
     dtstart: "2025-08-26T13:00:00",
