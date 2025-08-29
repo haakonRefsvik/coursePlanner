@@ -22,9 +22,11 @@
     &.collision {
       background-color: var(--red-dark);
       color: white;
+      transition: background-color var(--transitions);
     }
 
     &.collision-selected {
+      transition: background-color var(--transitions);
       background-color: var(--red);
       color: white;
     }
