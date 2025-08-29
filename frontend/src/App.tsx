@@ -7,6 +7,7 @@ import { WeekSelector } from "./components/WeekSelector";
 import { getNextColor } from "./utils/getNextColor";
 import { getCollidingEvents } from "./utils/getCollidingEvents";
 import { CourseOverview } from "./components/CourseOverview";
+import { testEvents } from "./utils/dummyEvents";
 
 function App() {
   const [courseInput, setCourseInput] = useState("");

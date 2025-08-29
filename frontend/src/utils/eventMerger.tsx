@@ -30,14 +30,15 @@ export function groupNonOverlappingEvents(events: Event[]): Event[][] {
     r.forEach((e) => {
       var collisions = 1;
 
-      result.forEach((o) => {
-        o.forEach((i) => {
+      // check how many slots the event collides with
+      outer: for (const slot of result) {
+        for (const i of slot) {
           if (isOverlapping(i, e) && i != e) {
-            console.log(e == i);
             collisions++;
+            continue outer;
           }
-        });
-      });
+        }
+      }
 
       console.log(e.courseid + " has " + collisions + " collisions ");
 
