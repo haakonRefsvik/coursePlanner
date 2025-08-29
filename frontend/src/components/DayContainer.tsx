@@ -10,9 +10,8 @@ export function DayContainer({ events }: DayContainerProps) {
   const hourstart = 8;
   const hours = Array.from({ length: 10 }, (_, i) => i + hourstart);
   const hourPixelHeight = 50;
-  const dayPixelWidth = 200;
-  const eventGroups = groupNonOverlappingEvents(events);
-  console.log(eventGroups.length);
+  const dayPixelWidth = 160;
+  groupNonOverlappingEvents(events);
 
   return (
     <div className="daycontainer" style={{ width: `${dayPixelWidth}px` }}>

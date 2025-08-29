@@ -28,11 +28,23 @@ export function groupNonOverlappingEvents(events: Event[]): Event[][] {
 
   result.forEach((r, index) =>
     r.forEach((e) => {
-      e.widthPercent = 100 / result.length;
+      var collisions = 1;
+
+      result.forEach((o) => {
+        o.forEach((i) => {
+          if (isOverlapping(i, e) && i != e) {
+            console.log(e == i);
+            collisions++;
+          }
+        });
+      });
+
+      console.log(e.courseid + " has " + collisions + " collisions ");
+
+      e.widthPercent = 100 / collisions;
       e.leftOffset = index;
     })
   );
 
-  console.log("devide everything by " + result.length);
   return result;
 }
