@@ -6,6 +6,7 @@
 
   button {
     @extend button; // inherit all global button styles
+    border-radius: var(--container-radius);
     padding-left: 5px;
     padding-right: 5px;
     font-size: 12px;

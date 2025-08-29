@@ -15,17 +15,17 @@ export function DayContainer({ events }: DayContainerProps) {
 
   return (
     <div className="daycontainer" style={{ width: `${dayPixelWidth}px` }}>
-      {hours.map((hour) => (
+      {hours.map((hour, index) => (
         <div
           key={hour}
           className="hour"
           style={{
             height: `${hourPixelHeight}px`,
             width: `${dayPixelWidth}px`,
+            backgroundColor:
+              index % 2 === 0 ? `var(--gray)` : `var(--gray-darker)`,
           }}
-        >
-          {hour}:00
-        </div>
+        ></div>
       ))}
 
       {events.map((event) => {
@@ -52,7 +52,8 @@ export function DayContainer({ events }: DayContainerProps) {
               className="eventthumb"
               style={{ backgroundColor: `${event.color}` }}
             ></div>
-            {event.courseid}
+
+            <p className="eventtitle">{event.courseid}</p>
           </div>
         );
       })}

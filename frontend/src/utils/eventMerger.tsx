@@ -31,7 +31,8 @@ export function groupNonOverlappingEvents(events: Event[]): Event[][] {
       var collisions = 1;
 
       // check how many slots the event collides with
-      outer: for (const slot of result) {
+      outer: for (const [slotIndex, slot] of result.entries()) {
+        if (slotIndex == index) continue;
         for (const i of slot) {
           if (isOverlapping(i, e) && i != e) {
             collisions++;
@@ -39,8 +40,6 @@ export function groupNonOverlappingEvents(events: Event[]): Event[][] {
           }
         }
       }
-
-      console.log(e.courseid + " has " + collisions + " collisions ");
 
       e.widthPercent = 100 / collisions;
       e.leftOffset = index;

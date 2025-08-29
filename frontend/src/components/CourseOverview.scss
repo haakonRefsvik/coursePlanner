@@ -1,7 +1,7 @@
 .course {
   height: 50px;
   background-color: gray;
-  border-radius: 5px;
+  border-radius: var(--container-radius);
   display: flex;
   flex-direction: row;
   justify-content: center;
@@ -20,9 +20,9 @@
   }
 
   .thumb {
-    margin-left: 15px;
-    width: 6px;
+    margin-left: 12px;
+    width: var(--thumb-width);
     height: 70%;
-    border-radius: 5px;
+    border-radius: var(--container-radius);
   }
 }

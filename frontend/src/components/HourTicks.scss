@@ -3,7 +3,6 @@
   height: 500px;
   display: flex;
   flex-direction: column;
-  margin-right: 10px;
 
   .hour-block {
     flex: 1; // evenly split among 10 blocks
@@ -14,15 +13,18 @@
     justify-content: flex-start; // push content to the top
     flex-direction: column;
     height: 10px;
+    width: 10px;
+    margin-left: 40px;
   }
 
   .hour-text {
     height: fit-content; // fine, but not needed in most cases
     color: gray;
     margin: 0; // remove default margins
-    margin-top: 5px;
+    margin-top: -10px;
     padding: 0; // remove padding if any
     line-height: 1; // keeps text compact (can tweak e.g. 1.2)
     display: inline-block; // shrink-wraps the content
+    margin-right: 15px;
   }
 }

@@ -1,11 +1,13 @@
 .daycontainer {
   position: relative; /* allows absolute positioning inside */
   width: 200px;
+  position: relative;
 }
 
 .hour {
   height: 50px; /* fixed height for each hour */
-  border: 1px solid #ccc;
+  border-top: 1px solid gray;
+  border-left: 1px dashed gray;
   padding: 8px;
   box-sizing: border-box;
 }
@@ -14,21 +16,26 @@
   position: absolute; /* sits on top of hour divs */
   background-color: gray;
   box-sizing: border-box;
-  border-radius: 10px;
+  border-radius: var(--container-radius);
   overflow: hidden;
   text-overflow: ellipsis;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+  width: 100%;
+}
+
+.eventtitle {
+  font-weight: 500;
 }
 
 .eventthumb {
-  width: 5px;
+  width: var(--thumb-width);
   margin-left: 0px;
-  border-radius: 5px;
-  height: 80%;
+  border-radius: var(--container-radius);
+  height: 85%;
   align-self: center;
   margin-right: 10px;
-  margin-left: 10px;
+  margin-left: 8px;
   flex-shrink: 0;
 }
