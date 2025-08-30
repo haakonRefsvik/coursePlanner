@@ -24,7 +24,7 @@
   }
   .dropdownbutton {
     @extend .button-common;
-    margin-left: 80px;
+
     transition:
       transform 0.3s ease,
       color 0.3s ease;
@@ -37,6 +37,8 @@
   .coursetext {
     margin-left: 20px;
     font-size: larger;
+    width: 140px;
+    text-align: left;
   }
 
   .thumb {

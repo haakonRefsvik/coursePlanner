@@ -17,11 +17,12 @@
   --gray-lightest: rgb(163, 163, 163);
   --gray-darker: #1f1f1f;
   --button-color: #151515;
-  --button-hover-color: #1f2d3b;
+  --button-hover-color: #19344f;
   --button-hover-border-color: #0056b3;
+  --sub-white: rgb(205, 205, 205);
 
-  --red: rgb(192, 109, 109);
-  --red-dark: rgb(111, 62, 62);
+  --red: rgb(220, 38, 38);
+  --red-dark: rgb(140, 38, 38);
 
   --container-radius: 5px;
   --thumb-width: 5px;

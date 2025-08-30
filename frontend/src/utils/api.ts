@@ -15,6 +15,7 @@ export async function fetchCourse(id: string): Promise<Course> {
     events: data.events.map(
       (e: any): Event => ({
         id: e.id,
+        disabled: false,
         widthPercent: 100,
         leftOffset: 0,
         crashesWithEvents: [],

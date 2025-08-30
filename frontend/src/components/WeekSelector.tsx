@@ -5,22 +5,20 @@ type WeekSelectorProps = {
   selectedWeek: number;
   onChange: (week: number) => void;
   weeks: number[];
-  collidingEvents: EventPair[];
+  collidingWeeks: number[];
 };
 
 export function WeekSelector({
   weeks,
   selectedWeek,
   onChange,
-  collidingEvents,
+  collidingWeeks,
 }: WeekSelectorProps) {
-  const collidingWeeks = collidingEvents.map((ep) => ep[0].weeknr);
-
   return (
     <div className="week-selector">
       {weeks.map((week) => {
         const isSelected = week === selectedWeek;
-        const hasCollision = collidingWeeks.includes(week);
+        const hasCollision = collidingWeeks?.includes(week);
 
         return (
           <button

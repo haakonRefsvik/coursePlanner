@@ -3,6 +3,7 @@ import type { Event } from "../types/Course";
 export const testEvents: Event[] = [
   {
     id: "1",
+    disabled: false,
     crashesWithEvents: [],
     widthPercent: 100,
     leftOffset: 0,
@@ -21,6 +22,7 @@ export const testEvents: Event[] = [
   },
   {
     id: "2",
+    disabled: false,
     crashesWithEvents: [],
     widthPercent: 100,
     leftOffset: 0,
@@ -53,6 +55,8 @@ export const testEvents: Event[] = [
     room: [],
     weeknr: 35,
     color: "#ff9800",
+    disabled: false,
+
     party: "Group C",
   },
   {
@@ -60,6 +64,8 @@ export const testEvents: Event[] = [
     widthPercent: 100,
     leftOffset: 0,
     eventid: "E3",
+    disabled: false,
+
     courseid: "C4",
     crashesWithEvents: [],
     title: "Event 3",

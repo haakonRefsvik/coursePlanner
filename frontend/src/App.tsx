@@ -9,6 +9,7 @@ import { getCollidingEvents } from "./utils/getCollidingEvents";
 import { CourseOverview } from "./components/CourseOverview";
 import { testEvents } from "./utils/dummyEvents";
 import { filterEvents } from "./utils/filterEvents";
+import { getWeeksWithCollisions } from "./utils/getWeeksWithCollisions";
 
 function App() {
   const [courseInput, setCourseInput] = useState("");
@@ -19,6 +20,8 @@ function App() {
   const [lastWeekNr, setLastWeekNr] = useState(0);
   const [checkFor, setCheckedFor] = useState(true);
   const [checkAnn, setCheckedAnn] = useState(true);
+  const [checkShowDisabled, setShowDisabled] = useState(true);
+  const [collidingWeeks, setCollidingWeeks] = useState<number[]>([]);
 
   const addCourse = async (id: string) => {
     try {
@@ -39,6 +42,7 @@ function App() {
     } catch (err) {
       console.log(err);
     } finally {
+      handleWeekChange();
       setLoading(false);
     }
   };
@@ -55,8 +59,19 @@ function App() {
   );
 
   const allEvents = coursesAdded.flatMap((course) => course.events);
-  const collidingEvents = getCollidingEvents(allEvents);
-  const filteredEvents = filterEvents(allEvents, checkFor, checkAnn);
+  const filteredEvents = filterEvents(allEvents, checkFor, checkAnn).filter(
+    (e) => checkShowDisabled || e.disabled === false
+  );
+
+  function handleWeekChange() {
+    const weeks = getWeeksWithCollisions(filteredEvents);
+    setCollidingWeeks(weeks);
+  }
+
+  function handleCourseRemoval(id: string) {
+    setCoursesAdded((prev) => prev.filter((c) => c.id !== id));
+    handleWeekChange();
+  }
 
   return (
     <>
@@ -72,6 +87,14 @@ function App() {
             <button onClick={() => addCourse(courseInput)}>Legg til</button>
           </div>
           <div className="checkbox-group">
+            <label>
+              <input
+                type="checkbox"
+                checked={checkShowDisabled}
+                onChange={() => setShowDisabled(!checkShowDisabled)}
+              />
+              Vis umarkerte
+            </label>
             <label>
               <input
                 type="checkbox"
@@ -94,22 +117,19 @@ function App() {
           </div>
           <CourseOverview
             courses={coursesAdded}
-            onRemoveCOurse={(id) =>
-              setCoursesAdded((prev) => prev.filter((c) => c.id !== id))
-            }
+            onRemoveCOurse={(id) => handleCourseRemoval(id)}
           ></CourseOverview>
         </div>
         <div>
           <WeekSelector
-            collidingEvents={collidingEvents}
+            collidingWeeks={collidingWeeks}
             weeks={allWeekNr}
             selectedWeek={weekSelected}
             onChange={(week) => setWeekSelected(week)}
           ></WeekSelector>
           <WeekContainer
-            showLessons={checkFor}
-            showOther={checkAnn}
             weekNumber={weekSelected}
+            onChange={handleWeekChange}
             events={filteredEvents}
           ></WeekContainer>
         </div>

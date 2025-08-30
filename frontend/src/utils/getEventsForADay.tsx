@@ -7,27 +7,15 @@ export function getEventsForADay(
   showLessons: boolean,
   showOther: boolean
 ): Event[] {
-  if (events == undefined) {
-    return [];
-  }
-  const relevantEvents: Event[] = [];
+  if (!events) return [];
+  return events.filter((event) => {
+    const isSameDay = parseDate(event.dtstart) === isoString;
 
-  events.map((event) => {
-    if (
-      parseDate(event.dtstart) == isoString &&
-      event.teachingMethod === "Forelesninger" &&
-      showLessons
-    ) {
-      relevantEvents.push(event);
-    }
-    if (
-      parseDate(event.dtstart) == isoString &&
-      event.teachingMethod !== "Forelesninger" &&
-      showOther
-    ) {
-      relevantEvents.push(event);
-    }
+    if (!isSameDay) return false;
+
+    if (event.teachingMethod === "Forelesninger" && showLessons) return true;
+    if (event.teachingMethod !== "Forelesninger" && showOther) return true;
+
+    return false;
   });
-
-  return relevantEvents;
 }

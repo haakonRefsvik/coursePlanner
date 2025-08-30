@@ -31,6 +31,7 @@ export interface Event {
   party: string;
   widthPercent: number;
   leftOffset: number;
+  disabled: boolean;
 }
 
 export interface Course {
