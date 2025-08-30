@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "./App.css";
 import { fetchCourse } from "./utils/api";
 import type { Course } from "./types/Course";
@@ -22,6 +22,7 @@ function App() {
   const [checkAnn, setCheckedAnn] = useState(true);
   const [checkShowDisabled, setShowDisabled] = useState(true);
   const [collidingWeeks, setCollidingWeeks] = useState<number[]>([]);
+  const [weekEventsChanged, setWeekEventsChanged] = useState(0);
 
   const addCourse = async (id: string) => {
     try {
@@ -42,7 +43,6 @@ function App() {
     } catch (err) {
       console.log(err);
     } finally {
-      handleWeekChange();
       setLoading(false);
     }
   };
@@ -59,18 +59,25 @@ function App() {
   );
 
   const allEvents = coursesAdded.flatMap((course) => course.events);
-  const filteredEvents = filterEvents(allEvents, checkFor, checkAnn).filter(
-    (e) => checkShowDisabled || e.disabled === false
-  );
+  const filteredEvents = useMemo(() => {
+    return filterEvents(allEvents, checkFor, checkAnn).filter(
+      (e) => checkShowDisabled || e.disabled === false
+    );
+  }, [allEvents, checkFor, checkAnn, checkShowDisabled]);
 
-  function handleWeekChange() {
+  useEffect(() => {
     const weeks = getWeeksWithCollisions(filteredEvents);
-    setCollidingWeeks(weeks);
-  }
+
+    setCollidingWeeks((prev) => {
+      const isSame =
+        prev.length === weeks.length &&
+        prev.every((week, i) => week === weeks[i]);
+      return isSame ? prev : weeks;
+    });
+  }, [filteredEvents, weekEventsChanged]);
 
   function handleCourseRemoval(id: string) {
     setCoursesAdded((prev) => prev.filter((c) => c.id !== id));
-    handleWeekChange();
   }
 
   return (
@@ -129,7 +136,7 @@ function App() {
           ></WeekSelector>
           <WeekContainer
             weekNumber={weekSelected}
-            onChange={handleWeekChange}
+            onChange={() => setWeekEventsChanged((n) => n + 1)}
             events={filteredEvents}
           ></WeekContainer>
         </div>
