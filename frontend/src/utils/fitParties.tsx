@@ -18,7 +18,7 @@ export function fitParties(events: Event[], allCourses: string[]) {
 
   for (const day in eventsByDay) {
     for (const event of eventsByDay[day]) {
-      if (!isColliding(event, eventsByDay[day])) {
+      if (!isColliding(event, eventsByDay[day], true)) {
         if (event.party !== null) {
           nonCollidingParties.push(event);
         }
@@ -27,8 +27,6 @@ export function fitParties(events: Event[], allCourses: string[]) {
       }
     }
   }
-
-  console.log(dontInclude);
 
   nonCollidingParties = nonCollidingParties.filter(
     (e) =>
@@ -41,11 +39,14 @@ export function fitParties(events: Event[], allCourses: string[]) {
     }
   });
   shuffle(nonCollidingParties);
+
   // choose the parties for each course
   allCourses.forEach((c) => {
     const p = nonCollidingParties.find((event) => event.courseid === c);
     if (p) {
       toggleSimilarEvents(p, events);
+    } else {
+      console.log("could not find for " + c);
     }
   });
 }
