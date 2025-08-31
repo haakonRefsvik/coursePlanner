@@ -6,6 +6,7 @@ import { toggleSimilarEvents } from "./toggleSImilarEvents";
 export function fitParties(events: Event[], allCourses: string[]) {
   const eventsByDay: Record<string, Event[]> = {};
   var nonCollidingParties: Event[] = [];
+  const dontInclude: Event[] = [];
 
   events.forEach((event) => {
     const day = event.dtstart.split("T")[0]; // extract the date part
@@ -13,20 +14,26 @@ export function fitParties(events: Event[], allCourses: string[]) {
     eventsByDay[day].push(event);
   });
 
-  // Loop over each day and its events
+  // Loop over each day and add the parties
 
   for (const day in eventsByDay) {
     for (const event of eventsByDay[day]) {
-      if (!isColliding(event, eventsByDay[day]) && event.party !== null) {
-        nonCollidingParties.push(event);
-      } else if (nonCollidingParties.includes(event)) {
-        // event that previosuly didnt collide, is colliding
-        nonCollidingParties = nonCollidingParties.filter(
-          (e) => e.party !== event.party
-        );
+      if (!isColliding(event, eventsByDay[day])) {
+        if (event.party !== null) {
+          nonCollidingParties.push(event);
+        }
+      } else {
+        dontInclude.push(event);
       }
     }
   }
+
+  console.log(dontInclude);
+
+  nonCollidingParties = nonCollidingParties.filter(
+    (e) =>
+      !dontInclude.some((d) => d.courseid === e.courseid && d.party === e.party)
+  );
 
   events.forEach((e) => {
     if (e.party !== null) {
