@@ -21,8 +21,11 @@
   --button-hover-border-color: #0056b3;
   --sub-white: rgb(205, 205, 205);
 
+  --container-hover-color: rgb(80, 80, 80);
+
   --red: rgb(220, 38, 38);
   --red-dark: rgb(140, 38, 38);
+  --red-darker: rgb(119, 32, 32);
 
   --container-radius: 5px;
   --thumb-width: 5px;

@@ -10,6 +10,7 @@ import { CourseOverview } from "./components/CourseOverview";
 import { testEvents } from "./utils/dummyEvents";
 import { filterEvents } from "./utils/filterEvents";
 import { getWeeksWithCollisions } from "./utils/getWeeksWithCollisions";
+import { fitParties } from "./utils/fitParties";
 
 function App() {
   const [courseInput, setCourseInput] = useState("");
@@ -23,6 +24,7 @@ function App() {
   const [checkShowDisabled, setShowDisabled] = useState(true);
   const [collidingWeeks, setCollidingWeeks] = useState<number[]>([]);
   const [weekEventsChanged, setWeekEventsChanged] = useState(0);
+  const [amountDisabled, setAmountDisabled] = useState(0);
 
   const addCourse = async (id: string) => {
     try {
@@ -67,6 +69,8 @@ function App() {
 
   useEffect(() => {
     const weeks = getWeeksWithCollisions(filteredEvents);
+    const disabledAmount = allEvents.filter((e) => e.disabled).length;
+    setAmountDisabled(disabledAmount);
 
     setCollidingWeeks((prev) => {
       const isSame =
@@ -78,6 +82,20 @@ function App() {
 
   function handleCourseRemoval(id: string) {
     setCoursesAdded((prev) => prev.filter((c) => c.id !== id));
+  }
+
+  function handleMarkAll() {
+    filteredEvents.forEach((e) => (e.disabled = false));
+    setWeekEventsChanged((n) => n + 1);
+  }
+
+  function handleParties() {
+    handleMarkAll();
+    fitParties(
+      allEvents,
+      coursesAdded.map((c) => c.id)
+    );
+    setWeekEventsChanged((n) => n + 1);
   }
 
   return (
@@ -100,7 +118,7 @@ function App() {
                 checked={checkShowDisabled}
                 onChange={() => setShowDisabled(!checkShowDisabled)}
               />
-              Vis umarkerte
+              Vis umarkerte ({amountDisabled})
             </label>
             <label>
               <input
@@ -118,6 +136,8 @@ function App() {
               />
               Annet
             </label>
+            <button onClick={() => handleMarkAll()}>Marker alle</button>
+            <button onClick={() => handleParties()}>Velg grupper</button>
           </div>
           <div className="loader-container">
             {loading ? <p>Laster ...</p> : null}

@@ -6,6 +6,7 @@ import { DayContainer } from "./DayContainer";
 import { HourTicks } from "./HourTicks";
 import "./WeekContainer.scss";
 import { getWeeksWithCollisions } from "../utils/getWeeksWithCollisions";
+import { toggleSimilarEvents } from "../utils/toggleSImilarEvents";
 
 type WeekContainerProps = {
   weekNumber: number;
@@ -22,23 +23,7 @@ export function WeekContainer({
   const [_, forceUpdate] = useState(0);
 
   function handleDisable(event: Event) {
-    var parties: string[] = [];
-
-    if (event.party) {
-      parties = event.party.split(",").map((p) => p.trim());
-    }
-
-    events?.forEach((e) => {
-      if (e.courseid != event.courseid) return;
-      if (event.party == null) {
-        if (e.teachingMethod === event.teachingMethod) {
-          e.disabled = !e.disabled;
-        }
-      } else if (parties.includes(e.party)) {
-        e.disabled = !e.disabled;
-      }
-    });
-
+    toggleSimilarEvents(event, events ?? []);
     forceUpdate((n) => n + 1);
     onChange();
   }
