@@ -1,7 +1,12 @@
 import type { Course, Room, Staff, Event } from "../types/Course";
 
-export async function fetchCourse(id: string): Promise<Course> {
-  const res = await fetch(`${import.meta.env.VITE_API_URL}/api/course/${id}`);
+export async function fetchCourse(
+  id: string,
+  semester: string
+): Promise<Course> {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/course/${id}/${semester}`
+  );
   if (!res.ok) {
     throw new Error(`Failed to fetch course: ${res.status}`);
   }
@@ -52,4 +57,17 @@ export async function fetchCourse(id: string): Promise<Course> {
   };
 
   return course;
+}
+
+export async function fetchSuggestions(input: string): Promise<string[]> {
+  const res = await fetch(
+    `${import.meta.env.VITE_API_URL}/api/courses/suggestions?query=${input}`
+  );
+  if (!res.ok) {
+    throw new Error(`Failed to fetch course: ${res.status}`);
+  }
+
+  const data = await res.json();
+
+  return data;
 }

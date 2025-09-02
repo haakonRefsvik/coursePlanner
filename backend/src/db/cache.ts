@@ -10,7 +10,6 @@ export async function initDB() {
     filename: "./cache.db",
     driver: sqlite3.Database,
   });
-
   // ensure table exists
   await db.exec(`
       CREATE TABLE IF NOT EXISTS cache (
@@ -21,4 +20,10 @@ export async function initDB() {
     `);
 
   return db;
+}
+
+export async function getAllCourses(): Promise<string[]> {
+  const database = await initDB();
+  const rows = await database.all<{ key: string }[]>(`SELECT key FROM cache`);
+  return rows.map((r) => r.key);
 }

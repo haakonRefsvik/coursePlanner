@@ -18,6 +18,49 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.seachfield {
+  width: 200px;
+}
+
+.seachbox {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.suggestionbox {
+  position: absolute;
+  border: black 1px var(--gray-lightest);
+  width: 200px;
+  border-radius: var(--container-radius);
+  box-sizing: border-box; /* border included inside width/height */
+  overflow: hidden;
+}
+
+.suggestion {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: var(--container-hover-color);
+  height: 40px;
+  align-content: center;
+  display: flex;
+  align-items: center;
+  padding: 0px 10px 0px 10px;
+  gap: 10px;
+}
+
+.searchicon {
+  margin-left: 0px;
+}
+
+.suggestion:hover {
+  transition: background-color var(--transitions);
+  background-color: var(--button-hover-color);
+}
+.suggestiontext {
+  margin-left: 0px;
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);
@@ -41,7 +84,7 @@
 
 .header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: start;
   gap: 10px;
   margin-bottom: 20px;

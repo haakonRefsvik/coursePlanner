@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useState } from "react";
 import "./App.css";
-import { fetchCourse } from "./utils/api";
+import { fetchCourse, fetchSuggestions } from "./utils/api";
 import type { Course } from "./types/Course";
 import { WeekContainer } from "./components/WeekContainer";
 import { WeekSelector } from "./components/WeekSelector";
 import { getNextColor } from "./utils/getNextColor";
-import { getCollidingEvents } from "./utils/getCollidingEvents";
 import { CourseOverview } from "./components/CourseOverview";
-import { testEvents } from "./utils/dummyEvents";
 import { filterEvents } from "./utils/filterEvents";
 import { getWeeksWithCollisions } from "./utils/getWeeksWithCollisions";
 import { fitParties } from "./utils/fitParties";
+import { CiSearch } from "react-icons/ci";
 
 function App() {
   const [courseInput, setCourseInput] = useState("");
@@ -25,17 +24,37 @@ function App() {
   const [collidingWeeks, setCollidingWeeks] = useState<number[]>([]);
   const [weekEventsChanged, setWeekEventsChanged] = useState(0);
   const [amountDisabled, setAmountDisabled] = useState(0);
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  var [chosenSemester, setChosenSemester] = useState<string>("");
 
-  const addCourse = async (id: string) => {
+  const getSuggestions = async (input: string) => {
+    const suggestions = await fetchSuggestions(input);
+    setSuggestions(suggestions);
+  };
+
+  useEffect(() => {
+    if (courseInput.length > 1) {
+      getSuggestions(courseInput);
+    } else {
+      setSuggestions([]);
+    }
+  }, [courseInput]);
+
+  const addCourse = async (id: string, semester: string = "25h") => {
     try {
       setLoading(true);
-      const newCourse = await fetchCourse(id);
+      var newCourse = await fetchCourse(id, semester);
+      if (chosenSemester !== "" && chosenSemester !== newCourse.semester) {
+        console.log("Cant choose course from different semesters");
+        return;
+      }
       setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
       setCheckedAnn(true);
       setCheckedFor(true);
       const color = getNextColor();
       newCourse.events.forEach((e) => (e.color = color));
-
+      setChosenSemester(newCourse.semester);
+      console.log(chosenSemester);
       if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
         setFirstWeekNr(newCourse.events[0].weeknr);
       }
@@ -81,7 +100,13 @@ function App() {
   }, [filteredEvents, weekEventsChanged]);
 
   function handleCourseRemoval(id: string) {
-    setCoursesAdded((prev) => prev.filter((c) => c.id !== id));
+    const updated = coursesAdded.filter((c) => c.id !== id);
+    setCoursesAdded(updated);
+    if (updated.length === 0) {
+      setFirstWeekNr(0);
+      setLastWeekNr(0);
+      setChosenSemester("");
+    }
   }
 
   function handleMarkAll() {
@@ -98,18 +123,37 @@ function App() {
     setWeekEventsChanged((n) => n + 1);
   }
 
+  function handleSelectCourse(course: string) {
+    addCourse(course);
+    setCourseInput("");
+  }
+
   return (
     <>
       <div className="card">
         <div className="dashboard">
           <div className="header">
-            <input
-              type="text"
-              value={courseInput}
-              onChange={(e) => setCourseInput(e.target.value)}
-              placeholder="Kurskode"
-            />
-            <button onClick={() => addCourse(courseInput)}>Legg til</button>
+            <div className="seachfield">
+              <input
+                className="seachbox"
+                type="text"
+                value={courseInput}
+                onChange={(e) => setCourseInput(e.target.value)}
+                placeholder="Kurskode"
+              />
+              <div className="suggestionbox">
+                {suggestions.map((s) => (
+                  <div
+                    className="suggestion"
+                    onClick={() => handleSelectCourse(s)}
+                  >
+                    <CiSearch className="searchicon" />
+                    <p className="suggestiontext">{s}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <button onClick={() => addCourse(courseInput)}>+</button>
           </div>
           <div className="checkbox-group">
             <label>
