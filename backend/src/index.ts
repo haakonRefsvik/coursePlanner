@@ -16,7 +16,7 @@ app.use(express.json());
 
 app.get("/api/course/:id/:semester", async (req, res) => {
   const db = await initDB();
-  const { id, semester } = req.params;
+  let { id, semester } = req.params;
   // db.run(`DELETE FROM cache`); reset db
 
   const row = await db.get(`SELECT value FROM cache WHERE key = ?`, [id]);
@@ -29,10 +29,28 @@ app.get("/api/course/:id/:semester", async (req, res) => {
 
   // courses that dont exist have null as events
   if (invalidCourse(data)) {
-    return res.status(404).json({ error: "Course is invalid" });
+    const uppercaseId = id.toUpperCase();
+    console.log("error, trying uppercase id: " + uppercaseId);
+
+    const row = await db.get(`SELECT value FROM cache WHERE key = ?`, [
+      uppercaseId,
+    ]);
+
+    if (row) {
+      console.log("uppercase id existed in cache");
+      return res.json(JSON.parse(row.value));
+    }
+
+    data = await fetchCourse(uppercaseId, semester);
+
+    if (invalidCourse(data)) {
+      return res.status(404).json({ error: "Course is invalid" });
+    }
+
+    id = uppercaseId;
   }
 
-  // empty events may mean that wrong seme0ster is given
+  // empty events may mean that wrong semester is given
   if (hasNoEvents(data)) {
     let otherSemester = "";
     if (semester.includes("v")) otherSemester = semester.substring(0, 2) + "h";
@@ -40,7 +58,7 @@ app.get("/api/course/:id/:semester", async (req, res) => {
     data = await fetchCourse(id, otherSemester);
 
     if (hasNoEvents(data)) {
-      return res.status(404).json({ error: "No events found for this course" });
+      data = await fetchCourse(id, otherSemester);
     }
   }
 

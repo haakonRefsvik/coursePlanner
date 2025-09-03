@@ -34,11 +34,25 @@ export function getSuggestions(
   input: string,
   n: number
 ): string[] {
+  const inputLower = input.toLowerCase();
+
   return candidates
-    .map((str) => ({
-      str,
-      distance: levenshtein(str.toLowerCase(), input.toLowerCase()),
-    }))
+    .map((str) => {
+      const strLower = str.toLowerCase();
+      let distance = levenshtein(strLower, inputLower);
+
+      // boost if input is prefix
+      if (strLower.startsWith(inputLower)) {
+        distance -= 2;
+      }
+
+      // boost if input is substring
+      if (strLower.includes(inputLower)) {
+        distance -= 1;
+      }
+
+      return { str, distance };
+    })
     .sort((a, b) => a.distance - b.distance) // smaller distance = more similar
     .splice(0, n)
     .map((item) => item.str);

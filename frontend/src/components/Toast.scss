@@ -1,0 +1,14 @@
+.toast {
+  position: fixed;
+  top: 150px;
+  left: 50%;
+  font-size: large;
+  transform: translateX(-50%);
+  background-color: var(--button-hover-color);
+  color: "#fff";
+  padding: 10px 20px;
+  border-radius: 6px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  transition: "opacity 0.3s";
+  z-index: 9999;
+}

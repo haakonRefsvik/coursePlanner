@@ -17,6 +17,7 @@ export function WeekSelector({
   return (
     <div className="week-selector">
       {weeks.map((week) => {
+        if (week === 0) return;
         const isSelected = week === selectedWeek;
         const hasCollision = collidingWeeks?.includes(week);
 

@@ -1,6 +1,7 @@
 .week-selector {
   display: flex;
   gap: 4px;
+  min-height: calc(1em + 2 * 10px); // font-size + vertical padding
   margin-bottom: 10px;
   width: 100%;
 

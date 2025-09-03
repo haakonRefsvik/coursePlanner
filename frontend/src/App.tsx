@@ -10,6 +10,9 @@ import { filterEvents } from "./utils/filterEvents";
 import { getWeeksWithCollisions } from "./utils/getWeeksWithCollisions";
 import { fitParties } from "./utils/fitParties";
 import { CiSearch } from "react-icons/ci";
+import { FaDice } from "react-icons/fa6";
+import toast, { Toaster } from "react-hot-toast";
+import { Toast } from "./components/Toast";
 
 function App() {
   const [courseInput, setCourseInput] = useState("");
@@ -20,12 +23,18 @@ function App() {
   const [lastWeekNr, setLastWeekNr] = useState(0);
   const [checkFor, setCheckedFor] = useState(true);
   const [checkAnn, setCheckedAnn] = useState(true);
-  const [checkShowDisabled, setShowDisabled] = useState(true);
+  const [checkShowDisabled, setShowDisabled] = useState(false);
   const [collidingWeeks, setCollidingWeeks] = useState<number[]>([]);
   const [weekEventsChanged, setWeekEventsChanged] = useState(0);
   const [amountDisabled, setAmountDisabled] = useState(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   var [chosenSemester, setChosenSemester] = useState<string>("");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const DEBOUNCE_DELAY = 300; // milliseconds
+
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+  };
 
   const getSuggestions = async (input: string) => {
     const suggestions = await fetchSuggestions(input);
@@ -33,19 +42,28 @@ function App() {
   };
 
   useEffect(() => {
-    if (courseInput.length > 1) {
-      getSuggestions(courseInput);
-    } else {
+    if (courseInput.length <= 1) {
       setSuggestions([]);
+      return;
     }
+
+    const handler = setTimeout(() => {
+      getSuggestions(courseInput);
+    }, DEBOUNCE_DELAY);
+
+    return () => clearTimeout(handler);
   }, [courseInput]);
 
   const addCourse = async (id: string, semester: string = "25h") => {
     try {
+      if (coursesAdded.map((course) => course.id).includes(id)) {
+        showToast("Du kan ikke legge til det samme emne flere ganger");
+        return;
+      }
       setLoading(true);
       var newCourse = await fetchCourse(id, semester);
       if (chosenSemester !== "" && chosenSemester !== newCourse.semester) {
-        console.log("Cant choose course from different semesters");
+        showToast("Du kan ikke velge kurs fra forskjellige semestre");
         return;
       }
       setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
@@ -54,7 +72,6 @@ function App() {
       const color = getNextColor();
       newCourse.events.forEach((e) => (e.color = color));
       setChosenSemester(newCourse.semester);
-      console.log(chosenSemester);
       if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
         setFirstWeekNr(newCourse.events[0].weeknr);
       }
@@ -62,9 +79,11 @@ function App() {
         setLastWeekNr(newCourse.events.at(-1)?.weeknr ?? 0);
       }
     } catch (err) {
+      showToast("Ukjent feil (se log)");
       console.log(err);
     } finally {
       setLoading(false);
+      setCourseInput("");
     }
   };
 
@@ -107,15 +126,11 @@ function App() {
       setLastWeekNr(0);
       setChosenSemester("");
     }
-  }
 
-  function handleMarkAll() {
-    filteredEvents.forEach((e) => (e.disabled = false));
-    setWeekEventsChanged((n) => n + 1);
+    showToast("Emne fjernet!");
   }
 
   function handleParties() {
-    handleMarkAll();
     fitParties(
       allEvents,
       coursesAdded.map((c) => c.id)
@@ -181,8 +196,12 @@ function App() {
               />
               Annet
             </label>
-            <button onClick={() => handleMarkAll()}>Marker alle</button>
-            <button onClick={() => handleParties()}>Velg grupper</button>
+            <button onClick={() => handleParties()}>
+              <div className="grouppickerbutton">
+                <FaDice size={20} />
+                Auto velg grupper
+              </div>
+            </button>
           </div>
           <div className="loader-container">
             {loading ? <p>Laster ...</p> : null}
@@ -192,6 +211,7 @@ function App() {
             onRemoveCOurse={(id) => handleCourseRemoval(id)}
           ></CourseOverview>
         </div>
+
         <div>
           <WeekSelector
             collidingWeeks={collidingWeeks}
@@ -205,6 +225,13 @@ function App() {
             events={filteredEvents}
           ></WeekContainer>
         </div>
+        {toastMessage && (
+          <Toast
+            message={toastMessage}
+            duration={2000}
+            onClose={() => setToastMessage(null)}
+          />
+        )}
       </div>
       <a href="https://github.com/haakonRefsvik" className="read-the-docs">
         GitHub

@@ -49,6 +49,13 @@
   gap: 10px;
 }
 
+.grouppickerbutton {
+  gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
 .searchicon {
   margin-left: 0px;
 }

@@ -4,6 +4,7 @@
     "sass": "^1.90.0"
   },
   "dependencies": {
+    "react-hot-toast": "^2.6.0",
     "react-loader-spinner": "^6.1.6"
   }
 }
