@@ -1,7 +1,7 @@
 .daycontainer {
   position: relative; /* allows absolute positioning inside */
   width: 200px;
-  position: relative;
+  overflow: visible;
 }
 
 .hour {
@@ -18,7 +18,7 @@
   background-color: var(--gray-lighter);
   box-sizing: border-box;
   border-radius: var(--container-radius);
-  overflow: hidden;
+  overflow: visible;
   text-overflow: ellipsis;
   display: flex;
   flex-direction: row;
@@ -38,6 +38,42 @@
 
   &:hover:not(.colliding) {
     background-color: var(--container-hover-color);
+  }
+
+  .event-tooltip {
+    visibility: hidden;
+    width: max-content;
+    max-width: 200px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    top: 105%;
+    text-align: left;
+    padding: 6px 8px;
+    border-radius: 4px;
+    position: absolute;
+    z-index: 1000;
+    overflow: visible;
+
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none; // avoid blocking mouse
+    white-space: nowrap;
+
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      left: -5px; // arrow pointing left
+      transform: translateY(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: transparent rgba(0, 0, 0, 0.6) transparent transparent;
+    }
+  }
+
+  &:hover .event-tooltip {
+    visibility: visible;
+    opacity: 1;
   }
 }
 
