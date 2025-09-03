@@ -25,7 +25,7 @@ export async function fetchCourse(
         leftOffset: 0,
         crashesWithEvents: [],
         party: e.party,
-        color: "",
+        color: "#000",
         courseid: e.courseid,
         weeknr: e.weeknr,
         eventid: e.eventid,

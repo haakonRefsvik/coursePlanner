@@ -18,35 +18,46 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-.seachfield {
-  width: 200px;
-}
-
 .seachbox {
   width: 100%;
   box-sizing: border-box;
 }
 
+.searchbutton {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+
+.seachfield {
+  position: relative; /* make parent the positioning context */
+  width: 200px;
+}
+
 .suggestionbox {
   position: absolute;
-  border: black 1px var(--gray-lightest);
-  width: 200px;
+  left: 0; /* align with input left edge */
+  width: 100%; /* match input width */
   border-radius: var(--container-radius);
-  box-sizing: border-box; /* border included inside width/height */
+  box-sizing: border-box;
   overflow: hidden;
+  z-index: 1000; /* appear above other elements */
 }
 
 .suggestion {
   display: flex;
   flex-direction: row;
-  width: 100%;
+  margin-left: -40px;
+  gap: 10px;
   background-color: var(--container-hover-color);
-  height: 40px;
   align-content: center;
   display: flex;
   align-items: center;
-  padding: 0px 10px 0px 10px;
-  gap: 10px;
+}
+
+.suggestion.highlighted {
+  transition: background-color var(--transitions);
+  background-color: var(--button-hover-color);
 }
 
 .grouppickerbutton {
@@ -57,7 +68,7 @@
 }
 
 .searchicon {
-  margin-left: 0px;
+  margin-left: 10px;
 }
 
 .suggestion:hover {

@@ -58,7 +58,7 @@ app.get("/api/course/:id/:semester", async (req, res) => {
     data = await fetchCourse(id, otherSemester);
 
     if (hasNoEvents(data)) {
-      data = await fetchCourse(id, otherSemester);
+      return res.status(404).json({ error: "Course has no events" });
     }
   }
 

@@ -16,7 +16,6 @@ export function CourseOverview({
   const [toggled, setToggled] = useState(false);
 
   const handleToggle = () => setToggled(!toggled);
-
   return (
     <>
       {courses.map((course) => (

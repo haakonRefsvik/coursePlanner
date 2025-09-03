@@ -11,7 +11,7 @@ import { getWeeksWithCollisions } from "./utils/getWeeksWithCollisions";
 import { fitParties } from "./utils/fitParties";
 import { CiSearch } from "react-icons/ci";
 import { FaDice } from "react-icons/fa6";
-import toast, { Toaster } from "react-hot-toast";
+import { IoMdAdd } from "react-icons/io";
 import { Toast } from "./components/Toast";
 
 function App() {
@@ -31,14 +31,10 @@ function App() {
   var [chosenSemester, setChosenSemester] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const DEBOUNCE_DELAY = 300; // milliseconds
+  const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
-  };
-
-  const getSuggestions = async (input: string) => {
-    const suggestions = await fetchSuggestions(input);
-    setSuggestions(suggestions);
   };
 
   useEffect(() => {
@@ -47,12 +43,37 @@ function App() {
       return;
     }
 
-    const handler = setTimeout(() => {
-      getSuggestions(courseInput);
+    const handler = setTimeout(async () => {
+      const results = await fetchSuggestions(courseInput);
+      setSuggestions(results);
+      setHighlightedIndex(null);
     }, DEBOUNCE_DELAY);
 
     return () => clearTimeout(handler);
   }, [courseInput]);
+
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!suggestions.length) return;
+
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev === null || prev === suggestions.length - 1 ? 0 : prev + 1
+      );
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        prev === null || prev === 0 ? suggestions.length - 1 : prev - 1
+      );
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (highlightedIndex !== null) {
+        handleSelectCourse(suggestions[highlightedIndex]);
+      } else {
+        handleSelectCourse(courseInput);
+      }
+    }
+  };
 
   const addCourse = async (id: string, semester: string = "25h") => {
     try {
@@ -155,21 +176,27 @@ function App() {
                 value={courseInput}
                 onChange={(e) => setCourseInput(e.target.value)}
                 placeholder="Kurskode"
+                onKeyDown={handleKeyDown}
               />
-              <div className="suggestionbox">
-                {suggestions.map((s) => (
-                  <div
-                    key={s}
-                    className="suggestion"
-                    onClick={() => handleSelectCourse(s)}
+              <ul className="suggestionbox">
+                {suggestions.map((suggestion, i) => (
+                  <li
+                    key={suggestion}
+                    className={`suggestion ${i === highlightedIndex ? "highlighted" : ""}`}
+                    onClick={() => handleSelectCourse(suggestion)}
                   >
                     <CiSearch className="searchicon" />
-                    <p className="suggestiontext">{s}</p>
-                  </div>
+                    <p className="suggestiontext">{suggestion}</p>
+                  </li>
                 ))}
-              </div>
+              </ul>
             </div>
-            <button onClick={() => addCourse(courseInput)}>+</button>
+            <button
+              className="searchbutton"
+              onClick={() => addCourse(courseInput)}
+            >
+              <IoMdAdd />
+            </button>
           </div>
           <div className="checkbox-group">
             <label>
