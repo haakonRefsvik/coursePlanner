@@ -1,13 +1,30 @@
 export function parseDate(isoString: string): string {
-  // Use the built-in Date parser
-  const date = new Date(isoString);
+  // Normalize timezone offsets:
+  // - "+01"   -> "+01:00"
+  // - "+0100" -> "+01:00"
+  const safe = isoString
+    .replace(/([+-]\d{2})(\d{2})$/, "$1:$2") // +0100 → +01:00
+    .replace(/([+-]\d{2})$/, "$1:00"); // +01   → +01:00
 
-  // Format to YYYY-MM-DD
-  const year = date.getFullYear();
-  const month = String(date.getMonth() + 1).padStart(2, "0");
-  const day = String(date.getDate()).padStart(2, "0");
+  const date = new Date(safe);
 
-  return `${year}-${month}-${day}`;
+  if (isNaN(date.getTime())) {
+    console.error("Invalid date:", isoString, "->", safe);
+    return "Invalid Date";
+  }
+
+  // Always return YYYY-MM-DD in UTC
+  return date.toISOString().split("T")[0];
+}
+
+// Fix timezone offsets:
+// +01 -> +01:00, +0100 -> +01:00
+export function safeDate(dateStr: string): Date {
+  const safeStr = dateStr
+    .replace(/([+-]\d{2})(\d{2})$/, "$1:$2") // +0100 → +01:00
+    .replace(/([+-]\d{2})$/, "$1:00"); // +01   → +01:00
+
+  return new Date(safeStr);
 }
 
 export function getHoursOnlyLiteral(isoString: string): string {

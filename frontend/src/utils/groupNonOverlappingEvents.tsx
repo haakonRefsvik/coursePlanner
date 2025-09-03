@@ -1,9 +1,10 @@
 import type { Event } from "../types/Course";
 import { isOverlapping } from "./events";
+import { safeDate } from "./parseDate";
 
 export function groupNonOverlappingEvents(events: Event[]): Event[] {
   const remaining = [...events].sort(
-    (a, b) => new Date(a.dtstart).getTime() - new Date(b.dtstart).getTime()
+    (a, b) => safeDate(a.dtstart).getTime() - safeDate(b.dtstart).getTime()
   );
 
   const result: Event[][] = [];

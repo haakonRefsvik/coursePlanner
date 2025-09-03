@@ -144,6 +144,7 @@ function App() {
               <div className="suggestionbox">
                 {suggestions.map((s) => (
                   <div
+                    key={s}
                     className="suggestion"
                     onClick={() => handleSelectCourse(s)}
                   >

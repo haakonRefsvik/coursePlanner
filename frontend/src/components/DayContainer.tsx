@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { getEventsForADay } from "../utils/getEventsForADay";
 import { getCollidingEvents } from "../utils/getCollidingEvents";
 import { isColliding } from "../utils/isColliding";
+import { safeDate } from "../utils/parseDate";
 
 type DayContainerProps = {
   allEvents: Event[];
@@ -30,7 +31,7 @@ export function DayContainer({
     <div className="daycontainer" style={{ width: `${dayPixelWidth}px` }}>
       {hours.map((hour, index) => (
         <div
-          key={hour}
+          key={date + hour}
           className="hour"
           style={{
             height: `${hourPixelHeight}px`,
@@ -42,15 +43,17 @@ export function DayContainer({
       ))}
 
       {groupOverlap.map((event) => {
-        const start = new Date(event.dtstart);
-        const end = new Date(event.dtend);
+        const start = safeDate(event.dtstart);
+        const end = safeDate(event.dtend);
         const eventHour = start.getHours();
         const durationMinutes = (end.getTime() - start.getTime()) / (1000 * 60);
         const durationPixelOffset = (hourPixelHeight / 60) * durationMinutes;
-        const minuteOffset = new Date(event.dtstart).getMinutes();
+        const minuteOffset = start.getMinutes();
         const minutePixelOffset = (hourPixelHeight / 60) * minuteOffset;
         const colliding =
           isColliding(event, events) && event.disabled === false;
+        const topPx =
+          (eventHour - hourstart) * hourPixelHeight + minutePixelOffset;
 
         return (
           <div
@@ -62,7 +65,7 @@ export function DayContainer({
             ${colliding ? "colliding" : ""} 
             ${event.disabled ? "disabled" : ""}`}
             style={{
-              top: `${(eventHour - hourstart) * hourPixelHeight + minutePixelOffset}px`,
+              top: `${topPx}px`,
               height: `${durationPixelOffset}px`,
               width: `${event.widthPercent * (dayPixelWidth / 100) - 5}px`,
               left: `${event.leftOffset * event.widthPercent * (dayPixelWidth / 100) + 1}px`,
