@@ -1,11 +1,8 @@
 import "./DayContainer.scss";
 import type { Event } from "../types/Course";
 import { groupNonOverlappingEvents } from "../utils/groupNonOverlappingEvents";
-import { mergeSimilarEvents } from "../utils/mergeSimilarEvents";
 import { GoStack } from "react-icons/go";
-import { useEffect, useState } from "react";
 import { getEventsForADay } from "../utils/getEventsForADay";
-import { getCollidingEvents } from "../utils/getCollidingEvents";
 import { isColliding } from "../utils/isColliding";
 import { safeDate } from "../utils/parseDate";
 

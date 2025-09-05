@@ -1,7 +1,5 @@
-import type { Course, Event } from "../types/Course";
+import type { Event } from "../types/Course";
 import { isColliding } from "./isColliding";
-import { shuffle } from "./shuffleList";
-import { toggleSimilarEvents } from "./toggleSImilarEvents";
 
 export function fitParties(events: Event[], allCourses: string[]) {
   const partyMap = new Map<string, Event[]>();
