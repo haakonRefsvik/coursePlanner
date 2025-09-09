@@ -14,6 +14,7 @@ import { FaDice } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { Toast } from "./components/Toast";
 import { useSearchParams } from "react-router-dom";
+import {SemesterSelector} from "./components/semesterSelector"
 
 function MainPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -34,6 +35,11 @@ function MainPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const DEBOUNCE_DELAY = 300; // milliseconds
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
+  const [semester, setSemester] = useState("h25");
+
+  useEffect(() => {
+    console.log("hasfsaf")
+  }, [semester])
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -45,16 +51,15 @@ function MainPage() {
     if (!items) return
     if (!semester) return
     const ids = items.split(",")
-    console.log(semester)
 
     async function fetchCourses(){
         try{
             for(const id of ids){
-                await addCourse(id, semester ?? "");
+                await addCourse(id);
             }
         }
         catch(err){
-            console.log(err)
+          showToast("Kunne ikke hente kurs fra url");
         }
     }
     fetchCourses();
@@ -105,8 +110,13 @@ function MainPage() {
     setSearchParams(searchParams)
   }, [coursesAdded])
 
-  const addCourse = async (id: string, semester: string = "25h") => {
+  const addCourse = async (id: string) => {
     try {
+      console.log(semester)
+      if(id === ""){
+        showToast("Skriv inn en emnekode");
+        return;
+      }
       if (coursesAdded.map((course) => course.id).includes(id)) {
         showToast("Du kan ikke legge til det samme emne flere ganger");
         return;
@@ -129,14 +139,17 @@ function MainPage() {
       const color = getNextColor();
       newCourse.events.forEach((e) => (e.color = color));
       setChosenSemester(newCourse.semester);
+      setSemester(newCourse.semester)
       if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
         setFirstWeekNr(newCourse.events[0].weeknr);
       }
       if (newCourse.events[0].weeknr > lastWeekNr || lastWeekNr === 0) {
         setLastWeekNr(newCourse.events.at(-1)?.weeknr ?? 0);
       }
+
+
     } catch (err) {
-      showToast("Ukjent feil (se log)");
+      showToast("Feil");
       console.log(err);
     } finally {
       setLoading(false);
@@ -226,14 +239,17 @@ function MainPage() {
                   </li>
                 ))}
               </ul>
+
+
             </div>
             <button
               className="searchbutton"
               onClick={() => addCourse(courseInput)}
             >
-              <IoMdAdd />
+              <IoMdAdd size={15}/>
             </button>
           </div>
+            <SemesterSelector year={25} value={semester} onChange={setSemester} />
           <div className="checkbox-group">
             <label>
               <input

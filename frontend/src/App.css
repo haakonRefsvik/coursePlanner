@@ -27,11 +27,12 @@
   display: flex;
   height: 100%;
   align-items: center;
+  padding: 10px;
 }
 
 .seachfield {
   position: relative; /* make parent the positioning context */
-  width: 200px;
+
 }
 
 .suggestionbox {
@@ -107,7 +108,7 @@
   align-items: flex-start;
   justify-content: start;
   gap: 10px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
 }
 
 .loader-container {

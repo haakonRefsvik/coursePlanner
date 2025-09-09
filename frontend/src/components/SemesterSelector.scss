@@ -1,0 +1,17 @@
+.selector{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+
+.selectorbutton{
+    padding: 7px;
+    width: 100%;
+    font-size: smaller;
+
+    &.selected{
+        background-color: var(--button-hover-color);
+        border-color: var(--button-hover-border-color);
+    }
+}
