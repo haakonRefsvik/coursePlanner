@@ -14,4 +14,11 @@
         background-color: var(--button-hover-color);
         border-color: var(--button-hover-border-color);
     }
+
+    &.disabled{
+        background-color: var(--gray-darker);
+        cursor: not-allowed;
+        color: gray
+    }
+
 }

@@ -14,7 +14,7 @@ import { FaDice } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { Toast } from "./components/Toast";
 import { useSearchParams } from "react-router-dom";
-import {SemesterSelector} from "./components/semesterSelector"
+import {SemesterSelector} from "./components/SemesterSelector"
 
 function MainPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -31,15 +31,11 @@ function MainPage() {
   const [weekEventsChanged, setWeekEventsChanged] = useState(0);
   const [amountDisabled, setAmountDisabled] = useState(0);
   const [suggestions, setSuggestions] = useState<string[]>([]);
-  var [chosenSemester, setChosenSemester] = useState<string>("");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const DEBOUNCE_DELAY = 300; // milliseconds
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
-  const [semester, setSemester] = useState("h25");
-
-  useEffect(() => {
-    console.log("hasfsaf")
-  }, [semester])
+  const [semester, setSemester] = useState("25h");
+  const [disableSemesterSelector, setDisableSemesterSelector] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
@@ -106,13 +102,12 @@ function MainPage() {
   useEffect(() => {
     const list = coursesAdded.map((course) => course.id)
     searchParams.set("items", list.join(","))
-    searchParams.set("semester", chosenSemester)
+    searchParams.set("semester", semester)
     setSearchParams(searchParams)
   }, [coursesAdded])
 
   const addCourse = async (id: string) => {
     try {
-      console.log(semester)
       if(id === ""){
         showToast("Skriv inn en emnekode");
         return;
@@ -129,16 +124,16 @@ function MainPage() {
         return searchParams
       })
 
-      if (chosenSemester !== "" && chosenSemester !== newCourse.semester) {
+      if (semester !== newCourse.semester && coursesAdded.length != 0) {
         showToast("Du kan ikke velge kurs fra forskjellige semestre");
         return;
       }
       setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
       setCheckedAnn(true);
       setCheckedFor(true);
+      setDisableSemesterSelector(true)
       const color = getNextColor();
       newCourse.events.forEach((e) => (e.color = color));
-      setChosenSemester(newCourse.semester);
       setSemester(newCourse.semester)
       if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
         setFirstWeekNr(newCourse.events[0].weeknr);
@@ -194,7 +189,7 @@ function MainPage() {
     if (updated.length === 0) {
       setFirstWeekNr(0);
       setLastWeekNr(0);
-      setChosenSemester("");
+      setDisableSemesterSelector(false)
     }
 
     showToast("Emne fjernet!");
@@ -249,7 +244,7 @@ function MainPage() {
               <IoMdAdd size={15}/>
             </button>
           </div>
-            <SemesterSelector year={25} value={semester} onChange={setSemester} />
+            <SemesterSelector disabled={disableSemesterSelector} year={25} value={semester} onChange={setSemester} />
           <div className="checkbox-group">
             <label>
               <input

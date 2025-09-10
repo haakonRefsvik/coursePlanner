@@ -1,11 +1,25 @@
 import "./SemesterSelector.scss"
 
-export function SemesterSelector({ year, value, onChange }: { year: number, value: string; onChange: (val: string) => void }) {
+export function SemesterSelector({ year, value, onChange, disabled }: { year: number, value: string; onChange: (val: string) => void, disabled: boolean }) {
 
     return (
       <div className="selector">
-        <button className={`selectorbutton ${value.includes("v") ? "selected" : ""}`} onClick={() => onChange(year + "v")}>Vår</button>
-        <button className={`selectorbutton ${value.includes("h") ? "selected" : ""}`} onClick={() => onChange(year + "h")}>Høst</button>
+        <button className={`
+          selectorbutton ${disabled ? "disabled" : ""}
+          selectorbutton ${value.includes("v") ? "selected" : ""}
+          `} onClick={() => {
+            if (!disabled){
+              onChange(year + "v")}}
+            }
+            >Vår</button>
+        <button className={`
+          selectorbutton ${disabled ? "disabled" : ""}
+          selectorbutton ${value.includes("h") ? "selected" : ""}
+          `} onClick={() => {
+            if (!disabled){
+              onChange(year + "h")}}
+            }
+            >Høst</button>
       </div>
 
     );

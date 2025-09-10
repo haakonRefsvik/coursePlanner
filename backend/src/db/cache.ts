@@ -13,9 +13,11 @@ export async function initDB() {
   // ensure table exists
   await db.exec(`
       CREATE TABLE IF NOT EXISTS cache (
-        key TEXT PRIMARY KEY,
+        key TEXT NOT NULL,
         value TEXT NOT NULL,
-        updatedAt INTEGER NOT NULL
+        semester TEXT NOT NULL,
+        updatedAt INTEGER NOT NULL,
+        PRIMARY KEY (key, semester)
       )
     `);
 
@@ -24,6 +26,7 @@ export async function initDB() {
 
 export async function getAllCourses(): Promise<string[]> {
   const database = await initDB();
-  const rows = await database.all<{ key: string }[]>(`SELECT key FROM cache`);
-  return rows.map((r) => r.key);
+  const rows = await database.all<{ key: string}[]>(`SELECT key FROM cache`);
+  const list = rows.map((r) => r.key)
+  return [...new Set(list)] // remove dupes
 }

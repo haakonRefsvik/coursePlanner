@@ -17,14 +17,12 @@ app.use(express.json());
 app.get("/api/course/:id/:semester", async (req, res) => {
   const db = await initDB();
   let { id, semester } = req.params;
-  // db.run(`DELETE FROM cache`); reset db
-
-  const row = await db.get(`SELECT value FROM cache WHERE key = ?`, [id]);
-
+  const row = await db.get(`SELECT value FROM cache WHERE key = ? AND semester = ?`, [id, semester]);
+  
   if (row) {
     return res.json(JSON.parse(row.value));
   }
-
+  
   let data = await fetchCourse(id, semester);
 
   // courses that dont exist have null as events
@@ -32,8 +30,9 @@ app.get("/api/course/:id/:semester", async (req, res) => {
     const uppercaseId = id.toUpperCase();
     console.log("error, trying uppercase id: " + uppercaseId);
 
-    const row = await db.get(`SELECT value FROM cache WHERE key = ?`, [
+    const row = await db.get(`SELECT value FROM cache WHERE key = ? AND semester = ?`, [
       uppercaseId,
+      semester
     ]);
 
     if (row) {
@@ -62,11 +61,12 @@ app.get("/api/course/:id/:semester", async (req, res) => {
     }
   }
 
+  console.log("override: " + semester)
   // override the value if the course exists in the cache
   await db.run(
-    `INSERT INTO cache (key, value, updatedAt) VALUES (?, ?, ?) 
-     ON CONFLICT(key) DO UPDATE SET value=excluded.value, updatedAt=excluded.updatedAt`,
-    [id, JSON.stringify(data), Date.now()]
+    `INSERT INTO cache (key, value, semester, updatedAt) VALUES (?, ?, ?, ?) 
+     ON CONFLICT(key, semester) DO UPDATE SET value=excluded.value, updatedAt=excluded.updatedAt`,
+    [id, JSON.stringify(data), semester, Date.now()]
   );
 
   res.json(data);

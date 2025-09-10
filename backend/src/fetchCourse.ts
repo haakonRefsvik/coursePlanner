@@ -11,6 +11,7 @@ export async function fetchCourse(id: string, semester: string) {
   );
 
   if (!response.ok) {
+    console.log(semester +", " + id)
     throw new Error("Failed to fetch");
   }
 
