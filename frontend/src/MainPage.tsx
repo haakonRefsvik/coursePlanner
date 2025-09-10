@@ -128,6 +128,7 @@ function MainPage() {
         showToast("Du kan ikke velge kurs fra forskjellige semestre");
         return;
       }
+
       setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
       setCheckedAnn(true);
       setCheckedFor(true);
@@ -144,7 +145,7 @@ function MainPage() {
 
 
     } catch (err) {
-      showToast("Feil");
+      showToast("Det skjedde en feil");
       console.log(err);
     } finally {
       setLoading(false);
