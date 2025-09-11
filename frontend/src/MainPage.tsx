@@ -14,12 +14,12 @@ import { FaDice } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { Toast } from "./components/Toast";
 import { useSearchParams } from "react-router-dom";
-import {SemesterSelector} from "./components/SemesterSelector"
+import { SemesterSelector } from "./components/SemesterSelector";
 
 function MainPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [courseInput, setCourseInput] = useState("");
-  const [coursesAdded, setCoursesAdded] = useState<Course[]>([])
+  const [coursesAdded, setCoursesAdded] = useState<Course[]>([]);
   const [weekSelected, setWeekSelected] = useState<number>(34);
   const [loading, setLoading] = useState(false);
   const [firstWeekNr, setFirstWeekNr] = useState(0);
@@ -36,30 +36,53 @@ function MainPage() {
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const [semester, setSemester] = useState("25h");
   const [disableSemesterSelector, setDisableSemesterSelector] = useState(false);
+  const [chosenParties, setChosenParties] = useState<string[]>([]);
+  const [initialLoadDone, setInitialLoadDone] = useState(false);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
   };
 
   useEffect(() => {
-    const items = searchParams.get("items")
-    const semester = searchParams.get("semester")
-    if (!items) return
-    if (!semester) return
-    const ids = items.split(",")
+    const items = searchParams.get("items");
+    const semester = searchParams.get("semester");
+    if (!items) return;
+    if (!semester) return;
 
-    async function fetchCourses(){
-        try{
-            for(const id of ids){
-                await addCourse(id);
-            }
-        }
-        catch(err){
-          showToast("Kunne ikke hente kurs fra url");
-        }
+    //const courses = parties.split(",");
+
+    const ids = items.split(",");
+    async function fetchCourses() {
+      try {
+        await Promise.all(ids.map((id) => addCourse(id)));
+        setInitialLoadDone(true);
+      } catch (err) {
+        showToast("Kunne ikke hente kurs fra url");
+      }
     }
     fetchCourses();
-  }, [])
+  }, []);
+
+  useEffect(() => {
+    const partyCourseString = searchParams.get("parties");
+    if (!partyCourseString) return;
+    const partyCourseList = partyCourseString.split(",");
+
+    console.log(partyCourseString);
+    if (initialLoadDone && coursesAdded.length > 0) {
+      filteredEvents.forEach((event) => {
+        event.disabled = true;
+      });
+
+      setChosenParties(partyCourseString.split(","));
+
+      partyCourseList.forEach((pc) => {
+        const p = pc.split(":");
+        const course = p[0];
+        const party = p[1];
+      });
+    }
+  }, [initialLoadDone]);
 
   useEffect(() => {
     if (courseInput.length <= 1) {
@@ -100,15 +123,16 @@ function MainPage() {
   };
 
   useEffect(() => {
-    const list = coursesAdded.map((course) => course.id)
-    searchParams.set("items", list.join(","))
-    searchParams.set("semester", semester)
-    setSearchParams(searchParams)
-  }, [coursesAdded])
+    const list = coursesAdded.map((course) => course.id);
+    searchParams.set("items", list.join(","));
+    searchParams.set("semester", semester);
+    searchParams.set("parties", chosenParties.join(","));
+    setSearchParams(searchParams);
+  }, [coursesAdded, chosenParties]);
 
   const addCourse = async (id: string) => {
     try {
-      if(id === ""){
+      if (id === "") {
         showToast("Skriv inn en emnekode");
         return;
       }
@@ -119,10 +143,10 @@ function MainPage() {
       setLoading(true);
       var newCourse = await fetchCourse(id, semester);
 
-      setSearchParams(searchParams => {
-        searchParams.append("items", newCourse.id)
-        return searchParams
-      })
+      setSearchParams((searchParams) => {
+        searchParams.append("items", newCourse.id);
+        return searchParams;
+      });
 
       if (semester !== newCourse.semester && coursesAdded.length != 0) {
         showToast("Du kan ikke velge kurs fra forskjellige semestre");
@@ -132,18 +156,16 @@ function MainPage() {
       setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
       setCheckedAnn(true);
       setCheckedFor(true);
-      setDisableSemesterSelector(true)
+      setDisableSemesterSelector(true);
       const color = getNextColor();
       newCourse.events.forEach((e) => (e.color = color));
-      setSemester(newCourse.semester)
+      setSemester(newCourse.semester);
       if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
         setFirstWeekNr(newCourse.events[0].weeknr);
       }
       if (newCourse.events[0].weeknr > lastWeekNr || lastWeekNr === 0) {
         setLastWeekNr(newCourse.events.at(-1)?.weeknr ?? 0);
       }
-
-
     } catch (err) {
       showToast("Det skjedde en feil");
       console.log(err);
@@ -190,17 +212,19 @@ function MainPage() {
     if (updated.length === 0) {
       setFirstWeekNr(0);
       setLastWeekNr(0);
-      setDisableSemesterSelector(false)
+      setDisableSemesterSelector(false);
     }
 
     showToast("Emne fjernet!");
   }
 
   function handleParties() {
-    fitParties(
+    const chosenParties = fitParties(
       allEvents,
       coursesAdded.map((c) => c.id)
     );
+
+    setChosenParties(chosenParties);
     setWeekEventsChanged((n) => n + 1);
   }
 
@@ -235,17 +259,20 @@ function MainPage() {
                   </li>
                 ))}
               </ul>
-
-
             </div>
             <button
               className="searchbutton"
               onClick={() => addCourse(courseInput)}
             >
-              <IoMdAdd size={15}/>
+              <IoMdAdd size={15} />
             </button>
           </div>
-            <SemesterSelector disabled={disableSemesterSelector} year={25} value={semester} onChange={setSemester} />
+          <SemesterSelector
+            disabled={disableSemesterSelector}
+            year={25}
+            value={semester}
+            onChange={setSemester}
+          />
           <div className="checkbox-group">
             <label>
               <input

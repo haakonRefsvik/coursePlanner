@@ -1,10 +1,11 @@
 import type { Event } from "../types/Course";
 import { isColliding } from "./isColliding";
 
-export function fitParties(events: Event[], allCourses: string[]) {
+export function fitParties(events: Event[], allCourses: string[]): string[] {
   const partyMap = new Map<string, Event[]>();
   const partiesPerCourse = new Map<string, string[]>();
   const chosenEvents: Event[] = [];
+  const chosenParties: string[] = []
 
   events.forEach((event) => {
     const courseid = event.courseid;
@@ -53,12 +54,15 @@ export function fitParties(events: Event[], allCourses: string[]) {
         continue inner;
       }
 
-      // no collisions -> accept this party
+      // accept this party
       chosenEvents.push(...newEvents);
+      chosenParties.push(course + ":" + party)
       continue outer;
     }
   }
 
   events.forEach((event) => (event.disabled = true));
   chosenEvents.forEach((event) => (event.disabled = false));
+
+  return chosenParties
 }
