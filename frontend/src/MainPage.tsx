@@ -49,8 +49,6 @@ function MainPage() {
     if (!items) return;
     if (!semester) return;
 
-    //const courses = parties.split(",");
-
     const ids = items.split(",");
     async function fetchCourses() {
       try {
@@ -62,27 +60,6 @@ function MainPage() {
     }
     fetchCourses();
   }, []);
-
-  useEffect(() => {
-    const partyCourseString = searchParams.get("parties");
-    if (!partyCourseString) return;
-    const partyCourseList = partyCourseString.split(",");
-
-    console.log(partyCourseString);
-    if (initialLoadDone && coursesAdded.length > 0) {
-      filteredEvents.forEach((event) => {
-        event.disabled = true;
-      });
-
-      setChosenParties(partyCourseString.split(","));
-
-      partyCourseList.forEach((pc) => {
-        const p = pc.split(":");
-        const course = p[0];
-        const party = p[1];
-      });
-    }
-  }, [initialLoadDone]);
 
   useEffect(() => {
     if (courseInput.length <= 1) {
@@ -124,11 +101,25 @@ function MainPage() {
 
   useEffect(() => {
     const list = coursesAdded.map((course) => course.id);
-    searchParams.set("items", list.join(","));
-    searchParams.set("semester", semester);
-    searchParams.set("parties", chosenParties.join(","));
+
+    if (list.length > 0) {
+      searchParams.set("items", list.join(","));
+      searchParams.set("semester", semester);
+    } else {
+      searchParams.delete("items");
+      searchParams.delete("semester");
+    }
     setSearchParams(searchParams);
-  }, [coursesAdded, chosenParties]);
+  }, [coursesAdded, semester]);
+
+  useEffect(() => {
+    if (chosenParties.length > 0) {
+      searchParams.set("parties", chosenParties.join(","));
+      setSearchParams(searchParams);
+    } else {
+      searchParams.delete("parties");
+    }
+  }, [chosenParties]);
 
   const addCourse = async (id: string) => {
     try {
@@ -140,18 +131,23 @@ function MainPage() {
         showToast("Du kan ikke legge til det samme emne flere ganger");
         return;
       }
+
       setLoading(true);
+      const parties = searchParams.get("parties")?.split(","); // read the params before adding the course
       var newCourse = await fetchCourse(id, semester);
-
-      setSearchParams((searchParams) => {
-        searchParams.append("items", newCourse.id);
-        return searchParams;
-      });
-
+      console.log(parties);
       if (semester !== newCourse.semester && coursesAdded.length != 0) {
         showToast("Du kan ikke velge kurs fra forskjellige semestre");
         return;
       }
+
+      const pcString = parties?.find((pc) => pc.includes(newCourse.id));
+      const party = pcString?.split(":")[1];
+      newCourse.events.forEach((event) => {
+        if (event.party !== party && event.party) {
+          event.disabled = true;
+        }
+      });
 
       setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
       setCheckedAnn(true);
@@ -208,6 +204,7 @@ function MainPage() {
 
   function handleCourseRemoval(id: string) {
     const updated = coursesAdded.filter((c) => c.id !== id);
+    setChosenParties(chosenParties.filter((party) => !party.includes(id)));
     setCoursesAdded(updated);
     if (updated.length === 0) {
       setFirstWeekNr(0);
