@@ -15,9 +15,9 @@ import { IoMdAdd } from "react-icons/io";
 import { Toast } from "./components/Toast";
 import { useSearchParams } from "react-router-dom";
 import { SemesterSelector } from "./components/SemesterSelector";
+import { useCourseParties } from "./utils/useCoursesParties";
 
 function MainPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
   const [courseInput, setCourseInput] = useState("");
   const [coursesAdded, setCoursesAdded] = useState<Course[]>([]);
   const [weekSelected, setWeekSelected] = useState<number>(34);
@@ -34,32 +34,48 @@ function MainPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const DEBOUNCE_DELAY = 300; // milliseconds
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
-  const [semester, setSemester] = useState("25h");
   const [disableSemesterSelector, setDisableSemesterSelector] = useState(false);
-  const [chosenParties, setChosenParties] = useState<string[]>([]);
-  const [initialLoadDone, setInitialLoadDone] = useState(false);
+  const { semester, courses, setCourses, upsertCourse, setSemester } =
+    useCourseParties();
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
   };
 
   useEffect(() => {
-    const items = searchParams.get("items");
-    const semester = searchParams.get("semester");
-    if (!items) return;
-    if (!semester) return;
-
-    const ids = items.split(",");
-    async function fetchCourses() {
-      try {
-        await Promise.all(ids.map((id) => addCourse(id)));
-        setInitialLoadDone(true);
-      } catch (err) {
-        showToast("Kunne ikke hente kurs fra url");
+    const initialCourses = courses; // from URL once
+    async function loadCourses() {
+      const fetched: Course[] = [];
+      for (const c of initialCourses) {
+        try {
+          const newCourse = await fetchCourse(c.course, semester);
+          if (c.party !== undefined) {
+            newCourse.events.forEach((e) => {
+              if (e.party && e.party !== c.party) {
+                e.disabled = true;
+              }
+            });
+          }
+          fetched.push(newCourse);
+          setCheckedAnn(true);
+          setCheckedFor(true);
+          setDisableSemesterSelector(true);
+          const color = getNextColor();
+          newCourse.events.forEach((e) => (e.color = color));
+          if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
+            setFirstWeekNr(newCourse.events[0].weeknr);
+          }
+          if (newCourse.events[0].weeknr > lastWeekNr || lastWeekNr === 0) {
+            setLastWeekNr(newCourse.events.at(-1)?.weeknr ?? 0);
+          }
+        } catch (err) {
+          console.error("Failed to load course", c.course, err);
+        }
       }
+      setCoursesAdded(fetched);
     }
-    fetchCourses();
-  }, []);
+    loadCourses();
+  }, []); // only on mount
 
   useEffect(() => {
     if (courseInput.length <= 1) {
@@ -99,27 +115,7 @@ function MainPage() {
     }
   };
 
-  useEffect(() => {
-    const list = coursesAdded.map((course) => course.id);
-
-    if (list.length > 0) {
-      searchParams.set("items", list.join(","));
-      searchParams.set("semester", semester);
-    } else {
-      searchParams.delete("items");
-      searchParams.delete("semester");
-    }
-    setSearchParams(searchParams);
-  }, [coursesAdded, semester]);
-
-  useEffect(() => {
-    if (chosenParties.length > 0) {
-      searchParams.set("parties", chosenParties.join(","));
-      setSearchParams(searchParams);
-    } else {
-      searchParams.delete("parties");
-    }
-  }, [chosenParties]);
+  function setCourseStates() {}
 
   const addCourse = async (id: string) => {
     try {
@@ -133,29 +129,19 @@ function MainPage() {
       }
 
       setLoading(true);
-      const parties = searchParams.get("parties")?.split(","); // read the params before adding the course
       var newCourse = await fetchCourse(id, semester);
-      console.log(parties);
       if (semester !== newCourse.semester && coursesAdded.length != 0) {
         showToast("Du kan ikke velge kurs fra forskjellige semestre");
         return;
       }
 
-      const pcString = parties?.find((pc) => pc.includes(newCourse.id));
-      const party = pcString?.split(":")[1];
-      newCourse.events.forEach((event) => {
-        if (event.party !== party && event.party) {
-          event.disabled = true;
-        }
-      });
-
       setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
+      upsertCourse(id);
       setCheckedAnn(true);
       setCheckedFor(true);
       setDisableSemesterSelector(true);
       const color = getNextColor();
       newCourse.events.forEach((e) => (e.color = color));
-      setSemester(newCourse.semester);
       if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
         setFirstWeekNr(newCourse.events[0].weeknr);
       }
@@ -204,8 +190,9 @@ function MainPage() {
 
   function handleCourseRemoval(id: string) {
     const updated = coursesAdded.filter((c) => c.id !== id);
-    setChosenParties(chosenParties.filter((party) => !party.includes(id)));
     setCoursesAdded(updated);
+    setCourses(courses.filter((c) => c.course !== id));
+
     if (updated.length === 0) {
       setFirstWeekNr(0);
       setLastWeekNr(0);
@@ -221,7 +208,12 @@ function MainPage() {
       coursesAdded.map((c) => c.id)
     );
 
-    setChosenParties(chosenParties);
+    const updated = courses.map((c) => {
+      const match = chosenParties.find((cp) => cp.startsWith(c.course + ":"));
+      return match ? { course: c.course, party: match.split(":")[1] } : c;
+    });
+
+    setCourses(updated); // one update instead of overwriting per iteration
     setWeekEventsChanged((n) => n + 1);
   }
 
