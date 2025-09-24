@@ -13,7 +13,6 @@ import { CiSearch } from "react-icons/ci";
 import { FaDice } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
 import { Toast } from "./components/Toast";
-import { useSearchParams } from "react-router-dom";
 import { SemesterSelector } from "./components/SemesterSelector";
 import { useCourseParties } from "./utils/useCoursesParties";
 
@@ -60,7 +59,7 @@ function MainPage() {
           setCheckedAnn(true);
           setCheckedFor(true);
           setDisableSemesterSelector(true);
-          const color = getNextColor();
+          const color = getNextColor(newCourse.id);
           newCourse.events.forEach((e) => (e.color = color));
           if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
             setFirstWeekNr(newCourse.events[0].weeknr);
@@ -115,8 +114,6 @@ function MainPage() {
     }
   };
 
-  function setCourseStates() {}
-
   const addCourse = async (id: string) => {
     try {
       if (id === "") {
@@ -130,17 +127,18 @@ function MainPage() {
 
       setLoading(true);
       var newCourse = await fetchCourse(id, semester);
+
       if (semester !== newCourse.semester && coursesAdded.length != 0) {
         showToast("Du kan ikke velge kurs fra forskjellige semestre");
         return;
       }
 
       setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
-      upsertCourse(id);
+      upsertCourse(newCourse.id, newCourse.semester);
       setCheckedAnn(true);
       setCheckedFor(true);
       setDisableSemesterSelector(true);
-      const color = getNextColor();
+      const color = getNextColor(id);
       newCourse.events.forEach((e) => (e.color = color));
       if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
         setFirstWeekNr(newCourse.events[0].weeknr);
@@ -191,7 +189,10 @@ function MainPage() {
   function handleCourseRemoval(id: string) {
     const updated = coursesAdded.filter((c) => c.id !== id);
     setCoursesAdded(updated);
-    setCourses(courses.filter((c) => c.course !== id));
+    setCourses(
+      courses.filter((c) => c.course !== id),
+      semester
+    );
 
     if (updated.length === 0) {
       setFirstWeekNr(0);
@@ -213,7 +214,7 @@ function MainPage() {
       return match ? { course: c.course, party: match.split(":")[1] } : c;
     });
 
-    setCourses(updated); // one update instead of overwriting per iteration
+    setCourses(updated, semester); // one update instead of overwriting per iteration
     setWeekEventsChanged((n) => n + 1);
   }
 

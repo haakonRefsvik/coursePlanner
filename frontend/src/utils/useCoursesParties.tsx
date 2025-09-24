@@ -13,34 +13,46 @@ export function useCourseParties() {
   const courses = parseCoursesParam(searchParams.get("courses"));
 
   const setCourses = useCallback(
-    (updated: CourseSearch[]) => {
+    (updated: CourseSearch[], newSemester: string) => {
       setSearchParams({
-        semester,
+        semester: newSemester,
         courses: stringifyCourses(updated),
       });
     },
     [semester, setSearchParams]
   );
 
-  const setSemester = useCallback((newSemester: string) => {
-    setSearchParams({
-      semester: newSemester,
-      courses: stringifyCourses(courses),
-    });
-  }, []);
-
-  const upsertCourse = useCallback(
-    (course: string, party?: string) => {
-      const updated = [
-        ...courses.filter((c) => c.course !== course),
-        { course, party },
-      ];
-      setSearchParams({
-        semester,
-        courses: stringifyCourses(updated),
+  const setSemester = useCallback(
+    (newSemester: string) => {
+      setSearchParams((prev) => {
+        const currentCourses = prev.get("courses");
+        return {
+          semester: newSemester,
+          courses: currentCourses ?? "",
+        };
       });
     },
-    [courses, semester, setSearchParams]
+    [setSearchParams]
+  );
+
+  const upsertCourse = useCallback(
+    (course: string, newSemester: string, party?: string) => {
+      setSearchParams((prev) => {
+        const currentCourses = parseCoursesParam(prev.get("courses"));
+
+        const updated = [
+          ...currentCourses.filter((c) => c.course !== course),
+          { course, party },
+        ];
+
+        return {
+          semester: newSemester,
+          courses: stringifyCourses(updated),
+        };
+      });
+      console.log(newSemester);
+    },
+    [setSearchParams]
   );
 
   return { courses, semester, setCourses, upsertCourse, setSemester };
