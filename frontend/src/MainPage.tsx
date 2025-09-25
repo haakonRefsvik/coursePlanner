@@ -61,15 +61,14 @@ function MainPage() {
           setDisableSemesterSelector(true);
           const color = getNextColor(newCourse.id);
           newCourse.events.forEach((e) => (e.color = color));
-          if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
-            setFirstWeekNr(newCourse.events[0].weeknr);
-          }
-          if (newCourse.events[0].weeknr > lastWeekNr || lastWeekNr === 0) {
-            setLastWeekNr(newCourse.events.at(-1)?.weeknr ?? 0);
-          }
         } catch (err) {
           console.error("Failed to load course", c.course, err);
         }
+      }
+      const weeks = fetched.flatMap((c) => c.events.map((e) => e.weeknr));
+      if (weeks.length > 0) {
+        setFirstWeekNr(Math.min(...weeks));
+        setLastWeekNr(Math.max(...weeks));
       }
       setCoursesAdded(fetched);
     }
@@ -140,12 +139,10 @@ function MainPage() {
       setDisableSemesterSelector(true);
       const color = getNextColor(id);
       newCourse.events.forEach((e) => (e.color = color));
-      if (newCourse.events[0].weeknr < firstWeekNr || firstWeekNr === 0) {
-        setFirstWeekNr(newCourse.events[0].weeknr);
-      }
-      if (newCourse.events[0].weeknr > lastWeekNr || lastWeekNr === 0) {
-        setLastWeekNr(newCourse.events.at(-1)?.weeknr ?? 0);
-      }
+      setFirstWeekNr((prev) =>
+        Math.min(prev === 0 ? Infinity : prev, newCourse.events[0].weeknr)
+      );
+      setLastWeekNr(Math.max(lastWeekNr, newCourse.events.at(-1)?.weeknr ?? 0));
     } catch (err) {
       showToast("Det skjedde en feil");
       console.log(err);
