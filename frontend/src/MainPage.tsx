@@ -15,6 +15,7 @@ import { IoMdAdd } from "react-icons/io";
 import { Toast } from "./components/Toast";
 import { SemesterSelector } from "./components/SemesterSelector";
 import { useCourseParties } from "./utils/useCoursesParties";
+import getWeeksFromTo from "./utils/getWeeksFromTo";
 
 function MainPage() {
   const [courseInput, setCourseInput] = useState("");
@@ -65,11 +66,9 @@ function MainPage() {
           console.error("Failed to load course", c.course, err);
         }
       }
-      const weeks = fetched.flatMap((c) => c.events.map((e) => e.weeknr));
-      if (weeks.length > 0) {
-        setFirstWeekNr(Math.min(...weeks));
-        setLastWeekNr(Math.max(...weeks));
-      }
+      const weeks = getWeeksFromTo(fetched);
+      setFirstWeekNr(weeks[0]);
+      setLastWeekNr(weeks[1]);
       setCoursesAdded(fetched);
     }
     loadCourses();
@@ -132,17 +131,19 @@ function MainPage() {
         return;
       }
 
-      setCoursesAdded((prevCourses) => [...prevCourses, newCourse]);
+      setCoursesAdded((prevCourses) => {
+        const updated = [...prevCourses, newCourse];
+        const weekSpan = getWeeksFromTo(updated);
+        setFirstWeekNr(weekSpan[0]);
+        setLastWeekNr(weekSpan[1]);
+        return updated;
+      });
       upsertCourse(newCourse.id, newCourse.semester);
       setCheckedAnn(true);
       setCheckedFor(true);
       setDisableSemesterSelector(true);
       const color = getNextColor(id);
       newCourse.events.forEach((e) => (e.color = color));
-      setFirstWeekNr((prev) =>
-        Math.min(prev === 0 ? Infinity : prev, newCourse.events[0].weeknr)
-      );
-      setLastWeekNr(Math.max(lastWeekNr, newCourse.events.at(-1)?.weeknr ?? 0));
     } catch (err) {
       showToast("Det skjedde en feil");
       console.log(err);
@@ -184,18 +185,22 @@ function MainPage() {
   }, [filteredEvents, weekEventsChanged]);
 
   function handleCourseRemoval(id: string) {
-    const updated = coursesAdded.filter((c) => c.id !== id);
-    setCoursesAdded(updated);
+    setCoursesAdded(() => {
+      const updated = coursesAdded.filter((c) => c.id !== id);
+      if (updated.length === 0) {
+        setDisableSemesterSelector(false);
+      }
+      const weekSpan = getWeeksFromTo(updated);
+      setFirstWeekNr(weekSpan[0]);
+      setLastWeekNr(weekSpan[1]);
+      setWeekSelected(firstWeekNr);
+      return updated;
+    });
+
     setCourses(
       courses.filter((c) => c.course !== id),
       semester
     );
-
-    if (updated.length === 0) {
-      setFirstWeekNr(0);
-      setLastWeekNr(0);
-      setDisableSemesterSelector(false);
-    }
 
     showToast("Emne fjernet!");
   }
