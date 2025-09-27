@@ -15,7 +15,7 @@ import { IoMdAdd } from "react-icons/io";
 import { Toast } from "./components/Toast";
 import { SemesterSelector } from "./components/SemesterSelector";
 import { useCourseParties } from "./utils/useCoursesParties";
-import getWeeksFromTo from "./utils/getWeeksFromTo";
+import { IsSelectedWeekValid, getWeeksFromTo } from "./utils/getWeeksFromTo";
 
 function MainPage() {
   const [courseInput, setCourseInput] = useState("");
@@ -66,13 +66,19 @@ function MainPage() {
           console.error("Failed to load course", c.course, err);
         }
       }
-      const weeks = getWeeksFromTo(fetched);
-      setFirstWeekNr(weeks[0]);
-      setLastWeekNr(weeks[1]);
       setCoursesAdded(fetched);
     }
     loadCourses();
   }, []); // only on mount
+
+  useEffect(() => {
+    const weeks = getWeeksFromTo(coursesAdded);
+    if (!IsSelectedWeekValid(weeks, weekSelected)) {
+      setWeekSelected(weeks[0]);
+    }
+    setFirstWeekNr(weeks[0]);
+    setLastWeekNr(weeks[1]);
+  }, [coursesAdded]);
 
   useEffect(() => {
     if (courseInput.length <= 1) {
@@ -133,9 +139,6 @@ function MainPage() {
 
       setCoursesAdded((prevCourses) => {
         const updated = [...prevCourses, newCourse];
-        const weekSpan = getWeeksFromTo(updated);
-        setFirstWeekNr(weekSpan[0]);
-        setLastWeekNr(weekSpan[1]);
         return updated;
       });
       upsertCourse(newCourse.id, newCourse.semester);
@@ -152,12 +155,6 @@ function MainPage() {
       setCourseInput("");
     }
   };
-
-  useEffect(() => {
-    if (firstWeekNr !== 0) {
-      setWeekSelected(firstWeekNr);
-    }
-  }, [firstWeekNr]);
 
   const allWeekNr = Array.from(
     { length: lastWeekNr - firstWeekNr + 1 },
@@ -190,10 +187,6 @@ function MainPage() {
       if (updated.length === 0) {
         setDisableSemesterSelector(false);
       }
-      const weekSpan = getWeeksFromTo(updated);
-      setFirstWeekNr(weekSpan[0]);
-      setLastWeekNr(weekSpan[1]);
-      setWeekSelected(firstWeekNr);
       return updated;
     });
 

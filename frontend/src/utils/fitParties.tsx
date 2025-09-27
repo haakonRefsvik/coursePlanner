@@ -4,8 +4,8 @@ import { isColliding } from "./isColliding";
 export function fitParties(events: Event[], allCourses: string[]): string[] {
   const partyMap = new Map<string, Event[]>();
   const partiesPerCourse = new Map<string, string[]>();
-  const chosenEvents: Event[] = [];
-  const chosenParties: string[] = []
+  let chosenEvents: Event[] = [];
+  let chosenParties: string[] = [];
 
   events.forEach((event) => {
     const courseid = event.courseid;
@@ -29,19 +29,15 @@ export function fitParties(events: Event[], allCourses: string[]): string[] {
     }
   });
 
-  allCourses.sort(
-    (a, b) =>
-      partiesPerCourse.get(a)?.length! - partiesPerCourse.get(b)?.length!
-  );
+  allCourses.sort(() => Math.random() - 0.5);
 
-  // take the courses with fewest parties first
-  // then, pick a party that fits with the already added events
-  outer: for (const course of allCourses) {
-    let parties = partiesPerCourse.get(course) ?? [];
+  outer: for (let j = 0; j < allCourses.length; j++) {
+    let parties = partiesPerCourse.get(allCourses[j]) ?? [];
     if (parties.length === 0) continue;
     parties = [...parties].sort(() => Math.random() - 0.5);
-    inner: for (const party of parties) {
-      const key = course + "/" + party;
+    inner: for (let i = 0; i < parties.length; i++) {
+      const party = parties[i];
+      const key = allCourses[j] + "/" + party;
       const newEvents = partyMap.get(key) ?? [];
 
       // check if ALL events are non-colliding
@@ -50,13 +46,15 @@ export function fitParties(events: Event[], allCourses: string[]): string[] {
       );
 
       if (!isValidParty) {
-        // try next party
+        if (parties.length - 1 === i) {
+          console.log("BALLE");
+        }
         continue inner;
       }
 
       // accept this party
       chosenEvents.push(...newEvents);
-      chosenParties.push(course + ":" + party)
+      chosenParties.push(allCourses[j] + ":" + party);
       continue outer;
     }
   }
@@ -64,5 +62,5 @@ export function fitParties(events: Event[], allCourses: string[]): string[] {
   events.forEach((event) => (event.disabled = true));
   chosenEvents.forEach((event) => (event.disabled = false));
 
-  return chosenParties
+  return chosenParties;
 }

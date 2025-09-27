@@ -1,12 +1,16 @@
 .course {
-  height: 50px;
+  height: 45px;
   background-color: var(--gray-lighter);
   border-radius: var(--container-radius);
   display: flex;
   flex-direction: row;
 
   align-items: center;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+
+  &.colliding {
+    background-color: var(--red-dark);
+  }
 
   .button-common {
     cursor: pointer;
@@ -36,7 +40,7 @@
 
   .coursetext {
     margin-left: 20px;
-    font-size: larger;
+    font-size: large;
     flex: 1;
     text-align: left;
   }
