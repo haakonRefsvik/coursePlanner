@@ -1,66 +1,113 @@
 import type { Event } from "../types/Course";
 import { isColliding } from "./isColliding";
 
-export function fitParties(events: Event[], allCourses: string[]): string[] {
+function getParties(events: Event[], course: string) {
   const partyMap = new Map<string, Event[]>();
-  const partiesPerCourse = new Map<string, string[]>();
-  let chosenEvents: Event[] = [];
-  let chosenParties: string[] = [];
-
-  events.forEach((event) => {
-    const courseid = event.courseid;
-    const partyid = event.party;
-
-    if (!partyid) {
-      chosenEvents.push(event);
-      return;
-    }
-    const mapkey = courseid + "/" + partyid;
-
-    if (!partiesPerCourse.has(courseid)) {
-      partiesPerCourse.set(courseid, []);
-    }
-
-    if (partyMap.has(mapkey)) {
-      partyMap.get(mapkey)?.push(event);
-    } else {
-      partyMap.set(mapkey, [event]);
-      partiesPerCourse.get(courseid)?.push(partyid);
+  const parties: Party[] = [];
+  events.forEach((e) => {
+    if (e.courseid === course && e.party) {
+      if (partyMap.has(e.party)) {
+        partyMap.get(e.party)!.push(e);
+      } else {
+        partyMap.set(e.party, []);
+      }
+    } else if (e.courseid === course && !e.party) {
+      nonPartyEvents.push(e);
     }
   });
 
-  allCourses.sort(() => Math.random() - 0.5);
+  partyMap.forEach((events, partyId) => {
+    parties.push({ course: course, id: partyId });
+    partyEvents.set(`${course}:${partyId}`, events);
+  });
 
-  outer: for (let j = 0; j < allCourses.length; j++) {
-    let parties = partiesPerCourse.get(allCourses[j]) ?? [];
-    if (parties.length === 0) continue;
-    parties = [...parties].sort(() => Math.random() - 0.5);
-    inner: for (let i = 0; i < parties.length; i++) {
-      const party = parties[i];
-      const key = allCourses[j] + "/" + party;
-      const newEvents = partyMap.get(key) ?? [];
+  return parties;
+}
+const partyMap = new Map<string, Party[]>();
+const partyEvents = new Map<string, Event[]>();
+const courses: string[] = [];
+const nonPartyEvents: Event[] = [];
+const MAX_TRIES = 1000;
+let tries = 0;
 
-      // check if ALL events are non-colliding
-      const isValidParty = newEvents.every(
-        (event) => !isColliding(event, chosenEvents, true)
+export function fitParties(events: Event[], allCourses: string[]): Party[] {
+  allCourses.forEach((course) => {
+    let parties = getParties(events, course);
+    partyMap.set(course, parties);
+  });
+
+  courses.push(...allCourses);
+
+  for (const course of allCourses) {
+    let parties: Party[] = partyMap.get(course)!;
+    parties.sort(() => Math.random() - 0.5);
+
+    for (const party of parties) {
+      tries = 0;
+      const partiesChosen = recursiveSearch(
+        allCourses.length,
+        party,
+        new Set()
       );
-
-      if (!isValidParty) {
-        if (parties.length - 1 === i) {
-          console.log("BALLE");
-        }
-        continue inner;
+      if (partiesChosen) {
+        console.log(partiesChosen);
+        return [...partiesChosen];
       }
-
-      // accept this party
-      chosenEvents.push(...newEvents);
-      chosenParties.push(allCourses[j] + ":" + party);
-      continue outer;
     }
   }
-
-  events.forEach((event) => (event.disabled = true));
-  chosenEvents.forEach((event) => (event.disabled = false));
-
-  return chosenParties;
+  return [];
 }
+
+function recursiveSearch(
+  n: number,
+  party: Party,
+  partiesAdded: Set<Party>
+): Set<Party> | null {
+  tries += 1;
+  if (tries > MAX_TRIES) return null;
+  const currentCourses = [...partiesAdded].flatMap((p) => p.course);
+  if (currentCourses.includes(party.course)) return null;
+  const currentEvents: Event[] = [];
+  partiesAdded.forEach((p) => {
+    const events = partyEvents.get(`${p.course}:${p.id}`);
+    if (events) {
+      currentEvents.push(...events);
+    }
+  });
+
+  currentEvents.push(...nonPartyEvents);
+
+  const validParty = partyEvents
+    .get(`${party.course}:${party.id}`)
+    ?.every((e) => !isColliding(e, currentEvents, true));
+  if (!validParty) return null;
+
+  const newPartiesAdded = new Set(partiesAdded);
+  newPartiesAdded.add(party);
+  if (newPartiesAdded.size >= n) return newPartiesAdded;
+
+  const nextcourse = courses.find(
+    (c) => ![...newPartiesAdded].some((p) => p.course === c)
+  );
+  if (!nextcourse) return null;
+
+  const parties = partyMap.get(nextcourse);
+
+  if (!parties) return null;
+
+  for (const nextParty of parties) {
+    const res: Set<Party> | null = recursiveSearch(
+      n,
+      nextParty,
+      newPartiesAdded
+    );
+    if (res) return res;
+  }
+
+  return null;
+}
+
+type Party = {
+  course: string;
+  id: string;
+};

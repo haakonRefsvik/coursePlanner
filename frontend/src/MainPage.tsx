@@ -204,9 +204,18 @@ function MainPage() {
       coursesAdded.map((c) => c.id)
     );
 
+    coursesAdded.forEach((c) =>
+      c.events.forEach((e) => {
+        if (e.party != null) {
+          e.disabled = true;
+        }
+      })
+    );
+
+    chosenParties.forEach((cp) => cp);
     const updated = courses.map((c) => {
-      const match = chosenParties.find((cp) => cp.startsWith(c.course + ":"));
-      return match ? { course: c.course, party: match.split(":")[1] } : c;
+      const match = chosenParties.find((cp) => cp.course === c.course);
+      return match ? { course: c.course, party: match.id } : c;
     });
 
     setCourses(updated, semester); // one update instead of overwriting per iteration
