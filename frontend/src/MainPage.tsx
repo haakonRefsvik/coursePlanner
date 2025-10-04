@@ -198,6 +198,29 @@ function MainPage() {
     showToast("Emne fjernet!");
   }
 
+  useEffect(() => {
+    const parties: string[] = [];
+    outer: for (const course of coursesAdded) {
+      for (const event of course.events) {
+        if (event.party && !event.disabled) {
+          parties.push(course.id + ":" + event.party);
+          continue outer;
+        }
+      }
+    }
+
+    const updated = courses.map((c) => {
+      const match = parties.find((cp) => cp.split(":")[0] === c.course);
+      return match
+        ? { course: match.split(":")[0], party: match.split(":")[1] }
+        : { course: c.course };
+    });
+
+    console.log(updated);
+    console.log(parties);
+    setCourses(updated, semester); // one update instead of overwriting per iteration
+  }, [weekEventsChanged]);
+
   function handleParties() {
     const chosenParties = fitParties(
       allEvents,
@@ -216,13 +239,6 @@ function MainPage() {
       })
     );
 
-    const updated = courses.map((c) => {
-      const match = chosenParties.find((cp) => cp.split(":")[0] === c.course);
-      const course = match!.split(":")[0];
-      const party = match!.split(":")[1];
-      return match ? { course: course, party: party } : c;
-    });
-    setCourses(updated, semester); // one update instead of overwriting per iteration
     setWeekEventsChanged((n) => n + 1);
   }
 

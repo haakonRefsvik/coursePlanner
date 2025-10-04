@@ -1,11 +1,9 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { Event } from "../types/Course";
-import { getEventsForADay } from "../utils/getEventsForADay";
 import { formatDateToDayMonth, getDatesForWeek } from "../utils/parseDate";
 import { DayContainer } from "./DayContainer";
 import { HourTicks } from "./HourTicks";
 import "./WeekContainer.scss";
-import { getWeeksWithCollisions } from "../utils/getWeeksWithCollisions";
 import { toggleSimilarEvents } from "../utils/toggleSImilarEvents";
 
 type WeekContainerProps = {
