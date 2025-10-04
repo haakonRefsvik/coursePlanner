@@ -8,7 +8,7 @@ import { getNextColor } from "./utils/getNextColor";
 import { CourseOverview } from "./components/CourseOverview";
 import { filterEvents } from "./utils/filterEvents";
 import { getWeeksWithCollisions } from "./utils/getWeeksWithCollisions";
-import { fitParties } from "./utils/fitParties";
+import { fitParties, getKey } from "./utils/fitParties";
 import { CiSearch } from "react-icons/ci";
 import { FaDice } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
@@ -207,17 +207,21 @@ function MainPage() {
     coursesAdded.forEach((c) =>
       c.events.forEach((e) => {
         if (e.party != null) {
-          e.disabled = true;
+          if (chosenParties.includes(getKey(e.courseid, e.party))) {
+            e.disabled = false;
+          } else {
+            e.disabled = true;
+          }
         }
       })
     );
 
-    chosenParties.forEach((cp) => cp);
     const updated = courses.map((c) => {
-      const match = chosenParties.find((cp) => cp.course === c.course);
-      return match ? { course: c.course, party: match.id } : c;
+      const match = chosenParties.find((cp) => cp.split(":")[0] === c.course);
+      const course = match!.split(":")[0];
+      const party = match!.split(":")[1];
+      return match ? { course: course, party: party } : c;
     });
-
     setCourses(updated, semester); // one update instead of overwriting per iteration
     setWeekEventsChanged((n) => n + 1);
   }

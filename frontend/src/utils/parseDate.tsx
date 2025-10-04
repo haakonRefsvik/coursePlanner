@@ -31,6 +31,20 @@ export function getHoursOnlyLiteral(isoString: string): string {
   return isoString.split("T")[1].slice(0, 5); // "14:15"
 }
 
+export function isDifferentDay(
+  dateA: string | Date,
+  dateB: string | Date
+): boolean {
+  const dA = new Date(dateA);
+  const dB = new Date(dateB);
+
+  return (
+    dA.getFullYear() !== dB.getFullYear() ||
+    dA.getMonth() !== dB.getMonth() ||
+    dA.getDate() !== dB.getDate()
+  );
+}
+
 export function getDatesForWeek(year: number, week: number): string[] {
   const simpleDate = new Date(year, 0, 1 + (week - 1) * 7); // Approximate date
   const dayOfWeek = simpleDate.getDay(); // 0=Sun, 1=Mon, ...

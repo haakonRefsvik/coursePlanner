@@ -1,110 +1,190 @@
 import type { Event } from "../types/Course";
-import { isColliding } from "./isColliding";
+import { getCollisionList } from "./getCollisionList";
+import { isDifferentDay } from "./parseDate";
+const allPartiesMap = new Map<string, Party>();
+const partyMap = new Map<string, string[]>();
+const courseParties = new Map<string, string[]>();
+let deadParties: string[] = [];
 
-function getParties(events: Event[], course: string) {
-  const partyMap = new Map<string, Event[]>();
-  const parties: Party[] = [];
-  events.forEach((e) => {
-    if (e.courseid === course && e.party) {
-      if (partyMap.has(e.party)) {
-        partyMap.get(e.party)!.push(e);
-      } else {
-        partyMap.set(e.party, []);
+export function getKey(courseId: string, partyId: string): string {
+  return `${courseId}:${partyId}`;
+}
+
+function* dayEvents(events: Event[]) {
+  let day: Event[] = [];
+  for (let event of events) {
+    if (day[0]) {
+      if (isDifferentDay(day[0].dtstart, event.dtstart)) {
+        yield day;
+        day = [];
       }
-    } else if (e.courseid === course && !e.party) {
-      nonPartyEvents.push(e);
+    }
+    day.push(event);
+  }
+}
+
+function removeCollidingParties(events: Event[]) {
+  const dayGenerator = dayEvents(events);
+  for (let eventsInADay of dayGenerator) {
+    for (const dayEvent of eventsInADay) {
+      if (!dayEvent.party) continue;
+      let key = getKey(dayEvent.courseid, dayEvent.party);
+      let list = partyMap.get(key);
+      if (!list || list.length === 0) continue;
+      const collisions = getCollisionList(dayEvent, eventsInADay, true);
+      if (collisions.filter((e) => !e.party).length > 0) {
+        // ignore party if it collides with forelesning
+        partyMap.set(key, []);
+        deadParties.push(key);
+        continue;
+      }
+      const keysToRemove = new Set(
+        collisions.map((col) => getKey(col.courseid, col.party))
+      );
+      list = list!.filter((item) => !keysToRemove.has(item));
+
+      if (list.length === 0) deadParties.push(key);
+
+      partyMap.set(key, list);
+    }
+  }
+}
+
+export function fitParties(events: Event[], allCourses: string[]): string[] {
+  // First, populate allPartiesMap and initialize courseParties
+  allPartiesMap.clear();
+  partyMap.clear();
+  courseParties.clear();
+  deadParties = [];
+
+  for (const event of events) {
+    if (!event.party) continue;
+
+    const key = getKey(event.courseid, event.party);
+    allPartiesMap.set(key, {
+      course: event.courseid,
+      id: event.party,
+    });
+
+    if (!courseParties.has(event.courseid)) {
+      courseParties.set(event.courseid, []);
+    }
+  }
+
+  events.sort((a, b) => {
+    const da = new Date(a.dtstart);
+    da.setHours(0, 0, 0, 0);
+    const db = new Date(b.dtstart);
+    db.setHours(0, 0, 0, 0);
+    return da.getTime() - db.getTime();
+  });
+
+  // Populate partyMap and courseParties
+  for (const [key, party] of allPartiesMap.entries()) {
+    // All parties from OTHER courses
+    const otherCourseParties = [...allPartiesMap.keys()].filter(
+      (p) => !p.includes(party.course)
+    );
+    partyMap.set(key, otherCourseParties);
+
+    // Add to courseParties
+    courseParties.get(party.course)?.push(party.id);
+  }
+
+  removeCollidingParties(events);
+  // remove references of empty lists
+  partyMap.forEach((nonCollidingParties, party) => {
+    const filtered = nonCollidingParties.filter(
+      (item) => !deadParties.includes(item)
+    );
+
+    if (filtered.length === 0) {
+      partyMap.delete(party);
+    } else {
+      partyMap.set(party, filtered);
     }
   });
 
-  partyMap.forEach((events, partyId) => {
-    parties.push({ course: course, id: partyId });
-    partyEvents.set(`${course}:${partyId}`, events);
+  // sort keys from smallest to largest
+  const sortedKeys = [...partyMap.keys()].sort((k1, k2) => {
+    return (
+      courseParties.get(k1.split(":")[0])!.length -
+      courseParties.get(k2.split(":")[0])!.length
+    );
   });
 
-  return parties;
-}
-const partyMap = new Map<string, Party[]>();
-const partyEvents = new Map<string, Event[]>();
-const courses: string[] = [];
-const nonPartyEvents: Event[] = [];
-const MAX_TRIES = 1000;
-let tries = 0;
+  const solutions: string[][] = [];
+  const seen = new Set<string>(); // to track unique combinations
 
-export function fitParties(events: Event[], allCourses: string[]): Party[] {
-  allCourses.forEach((course) => {
-    let parties = getParties(events, course);
-    partyMap.set(course, parties);
-  });
+  for (const key of sortedKeys) {
+    const compatibleParties = new Set(partyMap.get(key));
+    const foundSolutions = recursiveTraverseAll(
+      key,
+      new Set(),
+      compatibleParties,
+      allCourses.length
+    );
 
-  courses.push(...allCourses);
-
-  for (const course of allCourses) {
-    let parties: Party[] = partyMap.get(course)!;
-    parties.sort(() => Math.random() - 0.5);
-
-    for (const party of parties) {
-      tries = 0;
-      const partiesChosen = recursiveSearch(
-        allCourses.length,
-        party,
-        new Set()
-      );
-      if (partiesChosen) {
-        console.log(partiesChosen);
-        return [...partiesChosen];
+    for (const sol of foundSolutions) {
+      const solArray = [...sol];
+      if (solArray.length === allCourses.length) {
+        const keyStr = solArray.slice().sort().join(","); // Normalize for uniqueness
+        if (!seen.has(keyStr)) {
+          seen.add(keyStr);
+          solutions.push(solArray);
+        }
       }
     }
   }
+
+  solutions.sort(() => Math.random() - 0.5);
+  if (solutions[0]) return [...solutions[0]];
+
   return [];
 }
 
-function recursiveSearch(
-  n: number,
-  party: Party,
-  partiesAdded: Set<Party>
-): Set<Party> | null {
-  tries += 1;
-  if (tries > MAX_TRIES) return null;
-  const currentCourses = [...partiesAdded].flatMap((p) => p.course);
-  if (currentCourses.includes(party.course)) return null;
-  const currentEvents: Event[] = [];
-  partiesAdded.forEach((p) => {
-    const events = partyEvents.get(`${p.course}:${p.id}`);
-    if (events) {
-      currentEvents.push(...events);
-    }
-  });
+function recursiveTraverseAll(
+  key: string,
+  parties: Set<string>,
+  compatibleparties: Set<string>,
+  targetSize: number
+): Set<string>[] {
+  const courseId = key.split(":")[0];
 
-  currentEvents.push(...nonPartyEvents);
-
-  const validParty = partyEvents
-    .get(`${party.course}:${party.id}`)
-    ?.every((e) => !isColliding(e, currentEvents, true));
-  if (!validParty) return null;
-
-  const newPartiesAdded = new Set(partiesAdded);
-  newPartiesAdded.add(party);
-  if (newPartiesAdded.size >= n) return newPartiesAdded;
-
-  const nextcourse = courses.find(
-    (c) => ![...newPartiesAdded].some((p) => p.course === c)
-  );
-  if (!nextcourse) return null;
-
-  const parties = partyMap.get(nextcourse);
-
-  if (!parties) return null;
-
-  for (const nextParty of parties) {
-    const res: Set<Party> | null = recursiveSearch(
-      n,
-      nextParty,
-      newPartiesAdded
-    );
-    if (res) return res;
+  // Don't allow more than one party from the same course
+  if ([...parties].some((p) => p.startsWith(courseId + ":"))) {
+    return [];
   }
 
-  return null;
+  // Create a new set with the current key added
+  const newParties = new Set(parties);
+  newParties.add(key);
+
+  // If we've added as many parties as we have courses, it's a valid solution
+  if (newParties.size >= targetSize) {
+    return [newParties];
+  }
+
+  const newKeys = partyMap.get(key)?.filter((p) => compatibleparties.has(p));
+  if (!newKeys || newKeys.length === 0) {
+    return [];
+  }
+
+  const newCompatible = new Set(newKeys);
+  const results: Set<string>[] = [];
+
+  // Explore all compatible next keys
+  for (const nextKey of newKeys) {
+    const subResults = recursiveTraverseAll(
+      nextKey,
+      newParties,
+      newCompatible,
+      targetSize
+    );
+    results.push(...subResults);
+  }
+
+  return results;
 }
 
 type Party = {
