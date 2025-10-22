@@ -18,3 +18,6 @@
 
 # Optional: IDE settings
 .vscode/
+
+# Databases
+*.db
