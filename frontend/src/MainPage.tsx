@@ -216,16 +216,11 @@ function MainPage() {
         : { course: c.course };
     });
 
-    console.log(updated);
-    console.log(parties);
     setCourses(updated, semester); // one update instead of overwriting per iteration
   }, [weekEventsChanged]);
 
   function handleParties() {
-    const chosenParties = fitParties(
-      allEvents,
-      coursesAdded.map((c) => c.id)
-    );
+    const chosenParties = fitParties(allEvents);
 
     coursesAdded.forEach((c) =>
       c.events.forEach((e) => {

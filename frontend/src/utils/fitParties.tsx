@@ -2,6 +2,8 @@ import type { Event } from "../types/Course";
 import { getCollisionList } from "./getCollisionList";
 import { isDifferentDay } from "./parseDate";
 const allPartiesMap = new Map<string, Party>();
+// {"IN1020:4": ["IN1000:1", "IN2010:2", ...]}
+// party: list of parties its compatible with
 const partyMap = new Map<string, string[]>();
 const courseParties = new Map<string, string[]>();
 let deadParties: string[] = [];
@@ -28,9 +30,11 @@ function removeCollidingParties(events: Event[]) {
   for (let eventsInADay of dayGenerator) {
     for (const dayEvent of eventsInADay) {
       if (!dayEvent.party) continue;
+      // get the key of the party, e.g. "IN100:5"
       let key = getKey(dayEvent.courseid, dayEvent.party);
+      // get the party´s list of other parties its compatible with
       let list = partyMap.get(key);
-      if (!list || list.length === 0) continue;
+      if ((!list || list.length === 0) && courseParties.size > 1) continue;
       const collisions = getCollisionList(dayEvent, eventsInADay, true);
       if (collisions.filter((e) => !e.party).length > 0) {
         // ignore party if it collides with forelesning
@@ -38,6 +42,7 @@ function removeCollidingParties(events: Event[]) {
         deadParties.push(key);
         continue;
       }
+
       const keysToRemove = new Set(
         collisions.map((col) => getKey(col.courseid, col.party))
       );
@@ -50,7 +55,24 @@ function removeCollidingParties(events: Event[]) {
   }
 }
 
-export function fitParties(events: Event[], allCourses: string[]): string[] {
+function getCollidingParties(events: Event[]): string[] {
+  const dayGenerator = dayEvents(events);
+  const collidingParties: Set<string> = new Set();
+  for (let eventsInADay of dayGenerator) {
+    for (const dayEvent of eventsInADay) {
+      if (!dayEvent.party) continue;
+      let key = getKey(dayEvent.courseid, dayEvent.party);
+      const collisions = getCollisionList(dayEvent, eventsInADay, true);
+      if (collisions.length > 0) {
+        collidingParties.add(key);
+      }
+    }
+  }
+
+  return [...collidingParties];
+}
+
+export function fitParties(events: Event[]): string[] {
   // First, populate allPartiesMap and initialize courseParties
   allPartiesMap.clear();
   partyMap.clear();
@@ -86,12 +108,21 @@ export function fitParties(events: Event[], allCourses: string[]): string[] {
       (p) => !p.includes(party.course)
     );
     partyMap.set(key, otherCourseParties);
-
     // Add to courseParties
     courseParties.get(party.course)?.push(party.id);
   }
-
   removeCollidingParties(events);
+
+  // edge case: there is only one course with parties
+  if (courseParties.size == 1) {
+    const collidingParties = getCollidingParties(events);
+    const solutions = [...allPartiesMap.keys()].filter(
+      (party) => !collidingParties.includes(party)
+    );
+
+    solutions.sort(() => Math.random() - 0.5);
+    return [solutions[0]];
+  }
   // remove references of empty lists
   partyMap.forEach((nonCollidingParties, party) => {
     const filtered = nonCollidingParties.filter(
@@ -115,28 +146,25 @@ export function fitParties(events: Event[], allCourses: string[]): string[] {
 
   const solutions: string[][] = [];
   const seen = new Set<string>(); // to track unique combinations
-
   for (const key of sortedKeys) {
     const compatibleParties = new Set(partyMap.get(key));
     const foundSolutions = recursiveTraverseAll(
       key,
       new Set(),
       compatibleParties,
-      allCourses.length
+      courseParties.size
     );
 
     for (const sol of foundSolutions) {
       const solArray = [...sol];
-      if (solArray.length === allCourses.length) {
-        const keyStr = solArray.slice().sort().join(","); // Normalize for uniqueness
-        if (!seen.has(keyStr)) {
-          seen.add(keyStr);
-          solutions.push(solArray);
-        }
+      const keyStr = solArray.slice().sort().join(","); // Normalize for uniqueness
+      if (!seen.has(keyStr)) {
+        seen.add(keyStr);
+        solutions.push(solArray);
       }
     }
   }
-
+  console.log(solutions);
   solutions.sort(() => Math.random() - 0.5);
   if (solutions[0]) return [...solutions[0]];
 
