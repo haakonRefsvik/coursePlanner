@@ -30,11 +30,11 @@ function removeCollidingParties(events: Event[]) {
   for (let eventsInADay of dayGenerator) {
     for (const dayEvent of eventsInADay) {
       if (!dayEvent.party) continue;
-      // get the key of the party, e.g. "IN100:5"
+      // get the key of the party, e.g. "IN1000:5"
       let key = getKey(dayEvent.courseid, dayEvent.party);
       // get the party´s list of other parties its compatible with
       let list = partyMap.get(key);
-      if ((!list || list.length === 0) && courseParties.size > 1) continue;
+      if (!list || list.length === 0) continue;
       const collisions = getCollisionList(dayEvent, eventsInADay, true);
       if (collisions.filter((e) => !e.party).length > 0) {
         // ignore party if it collides with forelesning
