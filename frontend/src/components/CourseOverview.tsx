@@ -52,7 +52,7 @@ export function CourseOverview({
   return (
     <>
       {coursesWithDeselectedEvents.size > 0 && (
-        <p>
+        <p className="coursestatustext">
           Emner med uvalgte <br />
           obligatoriske hendelser
         </p>
@@ -73,7 +73,9 @@ export function CourseOverview({
             />
           </div>
         ))}
-      {collidingCourses.size > 0 && <p>Emner som kolliderer</p>}
+      {collidingCourses.size > 0 && (
+        <p className="coursestatustext">Emner som kolliderer</p>
+      )}
       {courses
         .filter((c) => collidingCourses.has(c.id))
         .map((course) => (
@@ -90,7 +92,9 @@ export function CourseOverview({
             />
           </div>
         ))}
-      {coursesWithoutParties.size > 0 && <p>Emner uten valgt gruppe</p>}
+      {coursesWithoutParties.size > 0 && (
+        <p className="coursestatustext">Emner uten valgt gruppe</p>
+      )}
       {courses
         .filter((c) => coursesWithoutParties.has(c.id))
         .map((course) => (
@@ -107,7 +111,9 @@ export function CourseOverview({
             />
           </div>
         ))}
-      {problemCourses.size < courses.length && <p>Problemfrie emner</p>}
+      {problemCourses.size < courses.length && (
+        <p className="coursestatustext">Problemfrie emner</p>
+      )}
       {courses
         .filter(
           (c) =>

@@ -11,8 +11,6 @@ export function isColliding(
 ): boolean {
   return eventsSameDay.some((e) => {
     const disableCheck = ignoreDisabled ? true : !e.disabled;
-    return (
-      isOverlapping(e, event) && e.courseid !== event.courseid && disableCheck
-    );
+    return isOverlapping(e, event) && disableCheck && e != event;
   });
 }

@@ -13,7 +13,9 @@ export function getCollisionList(
     // x.course != y.course
     // OR
     // y party == null, meaning y might be an obligatory event)
-    const oneCourseCrashing = e.courseid !== event.courseid || !e.party;
+    const oneCourseCrashing =
+      e.courseid !== event.courseid ||
+      (!e.party && e.courseid == event.courseid);
     return isOverlapping(e, event) && oneCourseCrashing && disableCheck;
   });
 }

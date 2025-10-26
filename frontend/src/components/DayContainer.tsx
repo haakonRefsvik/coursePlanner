@@ -48,7 +48,7 @@ export function DayContainer({
         const minuteOffset = start.getMinutes();
         const minutePixelOffset = (hourPixelHeight / 60) * minuteOffset;
         const colliding =
-          isColliding(event, events) && event.disabled === false;
+          isColliding(event, events, true) && event.disabled === false;
         const topPx =
           (eventHour - hourstart) * hourPixelHeight + minutePixelOffset;
 
@@ -57,7 +57,7 @@ export function DayContainer({
             onClick={() => {
               onDisable(event);
             }}
-            key={event.id}
+            key={event.id + event.dtstart + event.party + event.courseid}
             className={`event 
             ${colliding ? "colliding" : ""} 
             ${event.disabled ? "disabled" : ""}`}
