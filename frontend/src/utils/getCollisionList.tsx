@@ -9,8 +9,10 @@ export function getCollisionList(
   return eventsSameDay.filter((e) => {
     const disableCheck = ignoreDisabled ? true : !e.disabled;
     // an x event is considered overlapping with event y if
-    // they overlap, AND: they are from different courses or y
-    // doesnt have a party, meaning it might be an obligatory event
+    // x and y overlap in time, AND:
+    // x.course != y.course
+    // OR
+    // y party == null, meaning y might be an obligatory event)
     const oneCourseCrashing = e.courseid !== event.courseid || !e.party;
     return isOverlapping(e, event) && oneCourseCrashing && disableCheck;
   });

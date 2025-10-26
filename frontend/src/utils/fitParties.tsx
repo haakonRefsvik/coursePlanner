@@ -112,7 +112,6 @@ export function fitParties(events: Event[]): string[] {
     courseParties.get(party.course)?.push(party.id);
   }
   removeCollidingParties(events);
-
   // edge case: there is only one course with parties
   if (courseParties.size == 1) {
     const collidingParties = getCollidingParties(events);
@@ -123,6 +122,7 @@ export function fitParties(events: Event[]): string[] {
     solutions.sort(() => Math.random() - 0.5);
     return [solutions[0]];
   }
+
   // remove references of empty lists
   partyMap.forEach((nonCollidingParties, party) => {
     const filtered = nonCollidingParties.filter(
@@ -135,6 +135,11 @@ export function fitParties(events: Event[]): string[] {
       partyMap.set(party, filtered);
     }
   });
+  const coursesWithParties = new Set(
+    [...partyMap.entries()].map(([party, _]) => {
+      return party.split(":")[0];
+    })
+  );
 
   // sort keys from smallest to largest
   const sortedKeys = [...partyMap.keys()].sort((k1, k2) => {
@@ -152,7 +157,7 @@ export function fitParties(events: Event[]): string[] {
       key,
       new Set(),
       compatibleParties,
-      courseParties.size
+      coursesWithParties.size
     );
 
     for (const sol of foundSolutions) {
@@ -164,7 +169,6 @@ export function fitParties(events: Event[]): string[] {
       }
     }
   }
-  console.log(solutions);
   solutions.sort(() => Math.random() - 0.5);
   if (solutions[0]) return [...solutions[0]];
 

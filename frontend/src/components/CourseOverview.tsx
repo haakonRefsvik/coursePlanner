@@ -33,13 +33,32 @@ export function CourseOverview({
     coursesWithoutParties.add(c.id);
   }
 
-  const handleToggle = () => setToggled(!toggled);
+  const coursesWithDeselectedEvents = new Set();
+  outer: for (const c of courses) {
+    for (const e of c.events) {
+      if (!e.party && e.disabled) {
+        coursesWithDeselectedEvents.add(c.id);
+        continue outer;
+      }
+    }
+  }
+
+  const problemCourses = new Set([
+    ...coursesWithDeselectedEvents,
+    ...collidingCourses,
+    ...coursesWithoutParties,
+  ]);
+
   return (
     <>
+      {coursesWithDeselectedEvents.size > 0 && (
+        <p>
+          Emner med uvalgte <br />
+          obligatoriske hendelser
+        </p>
+      )}
       {courses
-        .filter(
-          (c) => collidingCourses.has(c.id) || coursesWithoutParties.has(c.id)
-        )
+        .filter((c) => coursesWithDeselectedEvents.has(c.id))
         .map((course) => (
           <div key={course.id} className="course colliding">
             <div
@@ -47,11 +66,6 @@ export function CourseOverview({
               style={{ backgroundColor: course.events[0].color }}
             ></div>
             <div className="coursetext">{course.id}</div>
-            <FiChevronUp
-              size={20}
-              className={`dropdownbutton ${toggled ? "toggled" : ""}`}
-              onClick={handleToggle}
-            />
             <IoIosRemoveCircleOutline
               size={20}
               className="closebutton"
@@ -59,9 +73,47 @@ export function CourseOverview({
             />
           </div>
         ))}
+      {collidingCourses.size > 0 && <p>Emner som kolliderer</p>}
+      {courses
+        .filter((c) => collidingCourses.has(c.id))
+        .map((course) => (
+          <div key={course.id} className="course colliding">
+            <div
+              className="thumb"
+              style={{ backgroundColor: course.events[0].color }}
+            ></div>
+            <div className="coursetext">{course.id}</div>
+            <IoIosRemoveCircleOutline
+              size={20}
+              className="closebutton"
+              onClick={() => onRemoveCOurse(course.id)}
+            />
+          </div>
+        ))}
+      {coursesWithoutParties.size > 0 && <p>Emner uten valgt gruppe</p>}
+      {courses
+        .filter((c) => coursesWithoutParties.has(c.id))
+        .map((course) => (
+          <div key={course.id} className="course colliding">
+            <div
+              className="thumb"
+              style={{ backgroundColor: course.events[0].color }}
+            ></div>
+            <div className="coursetext">{course.id}</div>
+            <IoIosRemoveCircleOutline
+              size={20}
+              className="closebutton"
+              onClick={() => onRemoveCOurse(course.id)}
+            />
+          </div>
+        ))}
+      {problemCourses.size < courses.length && <p>Problemfrie emner</p>}
       {courses
         .filter(
-          (c) => !collidingCourses.has(c.id) && !coursesWithoutParties.has(c.id)
+          (c) =>
+            !collidingCourses.has(c.id) &&
+            !coursesWithoutParties.has(c.id) &&
+            !coursesWithDeselectedEvents.has(c.id)
         )
         .map((course) => (
           <div key={course.id} className="course">
@@ -70,11 +122,6 @@ export function CourseOverview({
               style={{ backgroundColor: course.events[0].color }}
             ></div>
             <div className="coursetext">{course.id}</div>
-            <FiChevronUp
-              size={20}
-              className={`dropdownbutton ${toggled ? "toggled" : ""}`}
-              onClick={handleToggle}
-            />
             <IoIosRemoveCircleOutline
               size={20}
               className="closebutton"
