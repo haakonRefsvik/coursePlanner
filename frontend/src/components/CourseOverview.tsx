@@ -28,9 +28,21 @@ export function CourseOverview({
   const coursesWithoutParties = new Set();
   outer: for (const c of courses) {
     for (const e of c.events) {
-      if (e.party && !e.disabled) continue outer;
+      if (e.party) continue outer;
     }
     coursesWithoutParties.add(c.id);
+  }
+
+  console.log(coursesWithoutParties);
+
+  const coursesWithoutChosenParty = new Set();
+  outer: for (const c of courses) {
+    for (const e of c.events) {
+      if (e.party && !e.disabled) continue outer;
+    }
+    if (!coursesWithoutParties.has(c.id)) {
+      coursesWithoutChosenParty.add(c.id);
+    }
   }
 
   const coursesWithDeselectedEvents = new Set();
@@ -46,7 +58,7 @@ export function CourseOverview({
   const problemCourses = new Set([
     ...coursesWithDeselectedEvents,
     ...collidingCourses,
-    ...coursesWithoutParties,
+    ...coursesWithoutChosenParty,
   ]);
 
   return (
@@ -92,11 +104,11 @@ export function CourseOverview({
             />
           </div>
         ))}
-      {coursesWithoutParties.size > 0 && (
+      {coursesWithoutChosenParty.size > 0 && (
         <p className="coursestatustext">Emner uten valgt gruppe</p>
       )}
       {courses
-        .filter((c) => coursesWithoutParties.has(c.id))
+        .filter((c) => coursesWithoutChosenParty.has(c.id))
         .map((course) => (
           <div key={course.id} className="course colliding">
             <div
@@ -118,7 +130,7 @@ export function CourseOverview({
         .filter(
           (c) =>
             !collidingCourses.has(c.id) &&
-            !coursesWithoutParties.has(c.id) &&
+            !coursesWithoutChosenParty.has(c.id) &&
             !coursesWithDeselectedEvents.has(c.id)
         )
         .map((course) => (

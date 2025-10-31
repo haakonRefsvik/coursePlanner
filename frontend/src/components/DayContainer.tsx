@@ -99,7 +99,10 @@ export function DayContainer({
                   ? event.party
                   : `Gruppe ${event.party}`)}{" "}
               <br />
-              Høyretrykk for å fjerne
+              <br />
+              Høyreklikk for å
+              <br />
+              fjerne hendelse
             </div>
           </div>
         );
