@@ -283,6 +283,12 @@ function MainPage() {
             onChange={setSemester}
           />
           <div className="checkbox-group">
+            <button onClick={() => handleParties()}>
+              <div className="grouppickerbutton">
+                <FaDice size={20} />
+                Auto velg grupper
+              </div>
+            </button>
             <label>
               <input
                 type="checkbox"
@@ -307,12 +313,6 @@ function MainPage() {
               />
               Annet
             </label>
-            <button onClick={() => handleParties()}>
-              <div className="grouppickerbutton">
-                <FaDice size={20} />
-                Auto velg grupper
-              </div>
-            </button>
           </div>
           <div className="loader-container">
             {loading ? <p>Laster ...</p> : null}

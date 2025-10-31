@@ -32,7 +32,6 @@
 
 .seachfield {
   position: relative; /* make parent the positioning context */
-
 }
 
 .suggestionbox {
@@ -68,6 +67,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
+  height: 20px;
 }
 
 .searchicon {
@@ -129,12 +129,13 @@
   display: flex;
   flex-direction: column;
   align-items: baseline;
+  gap: 10px;
 
   label {
     display: flex;
     font-size: medium;
     cursor: pointer;
-    gap: 10px;
+    gap: 5px;
   }
 
   input[type="checkbox"] {
