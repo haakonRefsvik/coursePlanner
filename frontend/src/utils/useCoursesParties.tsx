@@ -50,7 +50,6 @@ export function useCourseParties() {
           courses: stringifyCourses(updated),
         };
       });
-      console.log(newSemester);
     },
     [setSearchParams]
   );

@@ -31,11 +31,13 @@ export function groupNonOverlappingEvents(events: Event[]): Event[] {
     r.forEach((e) => {
       var collisions = 1;
       var collidingEvents: Event[] = [];
+      var biggestWidth = 0;
 
       // check how many slots the event collides with
       outer: for (const [slotIndex, slot] of result.entries()) {
         if (slotIndex == index) continue;
         for (const i of slot) {
+          biggestWidth = Math.max(biggestWidth, i.widthPercent);
           if (isOverlapping(i, e) && i != e) {
             if (i.courseid != e.courseid) {
               collidingEvents.push(i);
@@ -49,6 +51,18 @@ export function groupNonOverlappingEvents(events: Event[]): Event[] {
       e.crashesWithEvents = collidingEvents;
       e.widthPercent = 100 / collisions;
       e.leftOffset = index;
+    })
+  );
+
+  // double check if any widths are bigger then their colliding counterparts
+  // if so, give it the same width
+  result.forEach((r) =>
+    r.forEach((e) => {
+      e.crashesWithEvents.forEach((oe) => {
+        if (oe.widthPercent < e.widthPercent) {
+          e.widthPercent = oe.widthPercent;
+        }
+      });
     })
   );
 

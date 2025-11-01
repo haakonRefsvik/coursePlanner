@@ -124,6 +124,11 @@ function MainPage() {
         showToast("Skriv inn en emnekode");
         return;
       }
+      if (coursesAdded.length >= 10) {
+        showToast("Du kan ikke legge til mer enn 10 emner");
+        return;
+      }
+
       if (coursesAdded.map((course) => course.id).includes(id)) {
         showToast("Du kan ikke legge til det samme emne flere ganger");
         return;

@@ -33,8 +33,6 @@ export function CourseOverview({
     coursesWithoutParties.add(c.id);
   }
 
-  console.log(coursesWithoutParties);
-
   const coursesWithoutChosenParty = new Set();
   outer: for (const c of courses) {
     for (const e of c.events) {

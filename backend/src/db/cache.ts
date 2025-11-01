@@ -26,7 +26,7 @@ export async function initDB() {
 
 export async function getAllCourses(): Promise<string[]> {
   const database = await initDB();
-  const rows = await database.all<{ key: string}[]>(`SELECT key FROM cache`);
-  const list = rows.map((r) => r.key)
-  return [...new Set(list)] // remove dupes
+  const rows = await database.all<{ key: string }[]>(`SELECT key FROM cache`);
+  const list = rows.map((r) => r.key);
+  return [...new Set(list)]; // remove dupes
 }
