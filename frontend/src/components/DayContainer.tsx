@@ -48,7 +48,7 @@ export function DayContainer({
         const minuteOffset = start.getMinutes();
         const minutePixelOffset = (hourPixelHeight / 60) * minuteOffset;
         const colliding =
-          isColliding(event, events, true) && event.disabled === false;
+          isColliding(event, events) && event.disabled === false;
         const topPx =
           (eventHour - hourstart) * hourPixelHeight + minutePixelOffset;
 

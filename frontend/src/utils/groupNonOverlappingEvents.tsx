@@ -56,6 +56,7 @@ export function groupNonOverlappingEvents(events: Event[]): Event[] {
 
   // double check if any widths are bigger then their colliding counterparts
   // if so, give it the same width
+
   result.forEach((r) =>
     r.forEach((e) => {
       e.crashesWithEvents.forEach((oe) => {

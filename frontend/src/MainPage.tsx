@@ -187,6 +187,7 @@ function MainPage() {
   }, [filteredEvents, weekEventsChanged]);
 
   function handleCourseRemoval(id: string) {
+    setLoading(true);
     setCoursesAdded(() => {
       const updated = coursesAdded.filter((c) => c.id !== id);
       if (updated.length === 0) {
@@ -201,6 +202,7 @@ function MainPage() {
     );
 
     showToast("Emne fjernet!");
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -225,6 +227,7 @@ function MainPage() {
   }, [weekEventsChanged]);
 
   function handleParties() {
+    setLoading(true);
     const chosenParties = fitParties(allEvents);
 
     coursesAdded.forEach((c) =>
@@ -240,6 +243,7 @@ function MainPage() {
     );
 
     setWeekEventsChanged((n) => n + 1);
+    setLoading(false);
   }
 
   function handleSelectCourse(course: string) {
