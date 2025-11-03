@@ -227,23 +227,33 @@ function MainPage() {
   }, [weekEventsChanged]);
 
   function handleParties() {
+    if (loading) return;
     setLoading(true);
-    const chosenParties = fitParties(allEvents);
 
-    coursesAdded.forEach((c) =>
-      c.events.forEach(async (e) => {
-        if (e.party != null) {
-          if ((await chosenParties).includes(getKey(e.courseid, e.party))) {
-            e.disabled = false;
-          } else {
-            e.disabled = true;
-          }
-        }
-      })
+    const worker = new Worker(
+      new URL("./workers/fitWorker.ts", import.meta.url),
+      { type: "module" }
     );
 
-    setWeekEventsChanged((n) => n + 1);
-    setLoading(false);
+    worker.postMessage(allEvents);
+
+    worker.onmessage = (e) => {
+      const chosenParties = e.data;
+
+      coursesAdded.forEach((c) =>
+        c.events.forEach((event) => {
+          if (event.party != null) {
+            event.disabled = !chosenParties.includes(
+              getKey(event.courseid, event.party)
+            );
+          }
+        })
+      );
+
+      setWeekEventsChanged((n) => n + 1);
+      setLoading(false);
+      worker.terminate();
+    };
   }
 
   function handleSelectCourse(course: string) {
