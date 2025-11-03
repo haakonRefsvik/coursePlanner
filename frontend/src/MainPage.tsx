@@ -231,9 +231,9 @@ function MainPage() {
     const chosenParties = fitParties(allEvents);
 
     coursesAdded.forEach((c) =>
-      c.events.forEach((e) => {
+      c.events.forEach(async (e) => {
         if (e.party != null) {
-          if (chosenParties.includes(getKey(e.courseid, e.party))) {
+          if ((await chosenParties).includes(getKey(e.courseid, e.party))) {
             e.disabled = false;
           } else {
             e.disabled = true;
