@@ -8,7 +8,7 @@ import { getNextColor } from "./utils/getNextColor";
 import { CourseOverview } from "./components/CourseOverview";
 import { filterEvents } from "./utils/filterEvents";
 import { getWeeksWithCollisions } from "./utils/getWeeksWithCollisions";
-import { fitParties, getKey } from "./utils/fitParties";
+import { getKey } from "./utils/fitParties";
 import { CiSearch } from "react-icons/ci";
 import { FaDice } from "react-icons/fa6";
 import { IoMdAdd } from "react-icons/io";
