@@ -14,7 +14,6 @@ const courseColors = [
 let colorIndex = 0;
 
 export function getNextColor(id: string): string {
-  const color = courseColors[colorIndex];
   colorIndex = (colorIndex + 1) % courseColors.length; // cycle back to start
   const hashColor = "#" + betterHash(id, 6).toUpperCase();
   return hashColor;

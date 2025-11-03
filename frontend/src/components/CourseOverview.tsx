@@ -1,7 +1,6 @@
 import type { Course } from "../types/Course";
 import "./CourseOverview.scss";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
-import { FiChevronUp } from "react-icons/fi";
 import { useState } from "react";
 import { getCollidingEvents } from "../utils/getCollidingEvents";
 
@@ -14,7 +13,6 @@ export function CourseOverview({
   courses,
   onRemoveCOurse,
 }: CourseOverviewProps) {
-  const [toggled, setToggled] = useState(false);
   const collidingEvents = getCollidingEvents(
     courses.flatMap((c) => c.events),
     true

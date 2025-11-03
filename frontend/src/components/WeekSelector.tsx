@@ -1,4 +1,3 @@
-import type { EventPair } from "../utils/getCollidingEvents";
 import "./WeekSelector.scss";
 
 type WeekSelectorProps = {
