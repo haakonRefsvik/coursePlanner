@@ -1,7 +1,6 @@
 import type { Course } from "../types/Course";
 import "./CourseOverview.scss";
 import { IoIosRemoveCircleOutline } from "react-icons/io";
-import { useState } from "react";
 import { getCollidingEvents } from "../utils/getCollidingEvents";
 
 type CourseOverviewProps = {
