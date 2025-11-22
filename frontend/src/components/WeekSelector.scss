@@ -4,6 +4,17 @@
   min-height: calc(1em + 2 * 10px); // font-size + vertical padding
   margin-bottom: 10px;
   width: 100%;
+  overflow-x: auto; /* Allow scrolling if content overflows */
+  padding-bottom: 5px; /* Space for scrollbar */
+
+  /* Hide scrollbar for cleaner look on some browsers, or style it */
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+  }
 
   button {
     @extend button; // inherit all global button styles
@@ -11,7 +22,8 @@
     padding-left: 5px;
     padding-right: 5px;
     font-size: small;
-    flex: 1 1 0;
+    flex: 1 0 auto; /* Don't shrink, allow growing */
+    min-width: 30px; /* Ensure a minimum clickable size */
 
     &.selected {
       background-color: var(--button-hover-color);

@@ -35,6 +35,7 @@ function MainPage() {
   const DEBOUNCE_DELAY = 300; // milliseconds
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(null);
   const [disableSemesterSelector, setDisableSemesterSelector] = useState(false);
+  const [mobileDashboardOpen, setMobileDashboardOpen] = useState(false);
   const { semester, courses, setCourses, upsertCourse, setSemester } =
     useCourseParties();
 
@@ -264,7 +265,13 @@ function MainPage() {
   return (
     <>
       <div className="card">
-        <div className="dashboard">
+        <button
+          className="mobile-menu-toggle"
+          onClick={() => setMobileDashboardOpen(!mobileDashboardOpen)}
+        >
+          {mobileDashboardOpen ? "Skjul meny" : "Vis meny"}
+        </button>
+        <div className={`dashboard ${mobileDashboardOpen ? "open" : ""}`}>
           <div className="header">
             <div className="seachfield">
               <input
@@ -342,7 +349,7 @@ function MainPage() {
           ></CourseOverview>
         </div>
 
-        <div>
+        <div className="planner">
           <WeekSelector
             collidingWeeks={collidingWeeks}
             weeks={allWeekNr}

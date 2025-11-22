@@ -1,8 +1,9 @@
 #root {
-  max-width: 1280px;
+  width: min(100%, 1280px);
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  box-sizing: border-box;
 }
 
 .logo {
@@ -101,6 +102,15 @@
   padding: 2em;
   display: flex;
   flex-direction: row;
+  gap: 2rem;
+  align-items: flex-start;
+  box-sizing: border-box;
+}
+
+.planner {
+  flex: 1 1 0;
+  min-width: 0;
+  width: 100%;
 }
 
 .header {
@@ -120,9 +130,11 @@
 }
 
 .dashboard {
+  flex: 0 0 350px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  margin-right: 50px;
+  margin-right: 20px;
 }
 
 .checkbox-group {
@@ -146,4 +158,101 @@
 
 .read-the-docs {
   color: #888;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: var(--button-color);
+  color: white;
+  padding: 10px;
+  border-radius: var(--container-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.mobile-menu-toggle:hover {
+  background-color: var(--button-hover-color);
+}
+
+@media (max-width: 1024px) {
+  #root {
+    padding: 1.5rem;
+  }
+
+  .card {
+    flex-direction: column;
+    padding: 1.5rem;
+  }
+
+  .mobile-menu-toggle {
+    display: block;
+  }
+
+  .dashboard {
+    flex: auto;
+    margin-right: 0;
+    width: 100%;
+    display: none;
+  }
+
+  .dashboard.open {
+    display: flex;
+  }
+}
+
+@media (max-width: 768px) {
+  #root {
+    padding: 1.25rem;
+  }
+
+  .header {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .searchbutton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .card {
+    padding: 1.25rem;
+    gap: 1.5rem;
+  }
+
+  .checkbox-group {
+    width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  #root {
+    padding: 1rem;
+  }
+
+  .card {
+    padding: 1rem;
+  }
+
+  .header {
+    gap: 0.5rem;
+  }
+
+  .suggestion {
+    margin-left: 0;
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  .checkbox-group label {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .grouppickerbutton {
+    justify-content: center;
+    width: 100%;
+  }
 }

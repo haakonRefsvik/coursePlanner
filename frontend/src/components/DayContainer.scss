@@ -1,7 +1,14 @@
 .daycontainer {
   position: relative; /* allows absolute positioning inside */
-  width: 200px;
+  width: 100%;
+  min-width: 0;
   overflow: visible;
+}
+
+@media (max-width: 1024px) {
+  .daycontainer {
+    min-width: 140px;
+  }
 }
 
 .hour {

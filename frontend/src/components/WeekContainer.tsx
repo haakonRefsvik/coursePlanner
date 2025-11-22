@@ -30,6 +30,9 @@ export function WeekContainer({
     <>
       <div className="weekcontainer">
         <div>
+          <p className="date" style={{ visibility: "hidden" }}>
+            .
+          </p>
           <HourTicks from={8} to={17}></HourTicks>
         </div>
         {dates.map((date) => (
