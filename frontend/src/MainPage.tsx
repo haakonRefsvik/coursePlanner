@@ -363,7 +363,10 @@ function MainPage() {
           />
         )}
       </div>
-      <a href="https://github.com/haakonRefsvik" className="read-the-docs">
+      <a
+        href="https://github.com/haakonRefsvik/coursePlanner"
+        className="read-the-docs"
+      >
         GitHub
       </a>
     </>
