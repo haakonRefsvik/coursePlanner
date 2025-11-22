@@ -73,7 +73,6 @@ export function DayContainer({
               className="eventthumb"
               style={{ backgroundColor: `${event.color}` }}
             ></div>
-
             <div className="eventcontainer">
               <p className="eventtitle">{event.courseid}</p>
               <p className="eventcontent">{event.teachingMethod}</p>
@@ -91,19 +90,21 @@ export function DayContainer({
                 </div>
               )}
             </div>
-            <div className="event-tooltip">
-              <strong>{event.courseid}</strong> <br />
-              {event.teachingMethod} <br />
-              {event.party &&
-                (event.party.includes(",")
-                  ? event.party
-                  : `Gruppe ${event.party}`)}{" "}
-              <br />
-              <br />
-              Høyreklikk for å
-              <br />
-              fjerne hendelse
-            </div>
+            {!event.disabled && (
+              <div className="event-tooltip">
+                <strong>{event.courseid}</strong> <br />
+                {event.teachingMethod} <br />
+                {event.party &&
+                  (event.party.includes(",")
+                    ? event.party
+                    : `Gruppe ${event.party}`)}{" "}
+                <br />
+                <br />
+                Høyreklikk for å
+                <br />
+                fjerne hendelse
+              </div>
+            )}
           </div>
         );
       })}

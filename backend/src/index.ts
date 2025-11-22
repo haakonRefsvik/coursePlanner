@@ -11,36 +11,51 @@ import { hasNoEvents, invalidCourse } from "./utils/isEmpty";
 dotenv.config();
 
 const app = express();
+const CACHE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days invalidation
 app.use(cors());
 app.use(express.json());
 
 app.get("/api/course/:id/:semester", async (req, res) => {
   const db = await initDB();
   let { id, semester } = req.params;
+
+  // Load from cache
   const row = await db.get(
-    `SELECT value FROM cache WHERE key = ? AND semester = ?`,
+    `SELECT value, updatedAt FROM cache WHERE key = ? AND semester = ?`,
     [id, semester]
   );
 
+  const now = Date.now();
+
+  // If cached and not stale → return it
   if (row) {
-    return res.json(JSON.parse(row.value));
+    const age = now - row.updatedAt;
+    if (age < CACHE_MAX_AGE_MS) {
+      return res.json(JSON.parse(row.value));
+    } else {
+      console.log(`Cache stale for ${id} (${semester}), refreshing...`);
+    }
   }
 
   let data = await fetchCourse(id, semester);
 
-  // courses that dont exist have null as events
+  // invalid course handling
   if (invalidCourse(data)) {
     const uppercaseId = id.toUpperCase();
     console.log("error, trying uppercase id: " + uppercaseId);
 
     const row = await db.get(
-      `SELECT value FROM cache WHERE key = ? AND semester = ?`,
+      `SELECT value, updatedAt FROM cache WHERE key = ? AND semester = ?`,
       [uppercaseId, semester]
     );
 
+    // check cache age on uppercase
     if (row) {
-      console.log("uppercase id existed in cache");
-      return res.json(JSON.parse(row.value));
+      const age = now - row.updatedAt;
+      if (age < CACHE_MAX_AGE_MS) {
+        console.log("uppercase id existed in cache + fresh");
+        return res.json(JSON.parse(row.value));
+      }
     }
 
     data = await fetchCourse(uppercaseId, semester);
@@ -52,27 +67,33 @@ app.get("/api/course/:id/:semester", async (req, res) => {
     id = uppercaseId;
   }
 
-  // empty events may mean that wrong semester is given
+  // empty events semester fix
   if (hasNoEvents(data)) {
     let otherSemester = "";
     if (semester.includes("v")) otherSemester = semester.substring(0, 2) + "h";
     if (semester.includes("h")) otherSemester = semester.substring(0, 2) + "v";
-    console.log(
-      "wrong semester " + semester + "trying other: " + otherSemester
-    );
-    data = await fetchCourse(id, otherSemester);
-    semester = otherSemester;
 
-    if (hasNoEvents(data)) {
+    console.log(
+      "wrong semester " + semester + " trying other: " + otherSemester
+    );
+
+    const altData = await fetchCourse(id, otherSemester);
+
+    if (!hasNoEvents(altData)) {
+      data = altData;
+      semester = otherSemester;
+    } else {
       return res.status(404).json({ error: "Course has no events" });
     }
   }
 
-  // override the value if the course exists in the cache
+  // save new or refreshed cache entry
   await db.run(
-    `INSERT INTO cache (key, value, semester, updatedAt) VALUES (?, ?, ?, ?) 
-     ON CONFLICT(key, semester) DO UPDATE SET value=excluded.value, updatedAt=excluded.updatedAt`,
-    [id, JSON.stringify(data), semester, Date.now()]
+    `INSERT INTO cache (key, value, semester, updatedAt)
+     VALUES (?, ?, ?, ?)
+     ON CONFLICT(key, semester) DO UPDATE
+     SET value = excluded.value, updatedAt = excluded.updatedAt`,
+    [id, JSON.stringify(data), semester, now]
   );
 
   res.json(data);
