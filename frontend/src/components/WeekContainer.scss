@@ -15,7 +15,7 @@
   }
 
   > div:first-child {
-    min-width: 50px;
+    min-width: 60px;
     position: sticky;
     left: 0;
     z-index: 10;
@@ -47,16 +47,16 @@
 
     > div:first-child {
       flex: 0 0 auto;
-      min-width: 50px;
+      min-width: 60px;
     }
   }
 }
 
 @media (max-width: 1024px) {
   .weekcontainer {
-    margin-left: -3rem;
-    margin-right: -3rem;
-    width: calc(100% + 6rem);
+    margin-left: -1.5rem;
+    margin-right: -1.5rem;
+    width: calc(100% + 3rem);
     padding-left: 0.5rem;
   }
 }
@@ -64,18 +64,18 @@
 @media (max-width: 768px) {
   .weekcontainer {
     padding-bottom: 0.75rem;
-    margin-left: -2.5rem;
-    margin-right: -2.5rem;
-    width: calc(100% + 5rem);
+    margin-left: -1.25rem;
+    margin-right: -1.25rem;
+    width: calc(100% + 2.5rem);
   }
 }
 
 @media (max-width: 600px) {
   .weekcontainer {
     gap: 8px;
-    margin-left: -2rem;
-    margin-right: -2rem;
-    width: calc(100% + 4rem);
+    margin-left: -1rem;
+    margin-right: -1rem;
+    width: calc(100% + 2rem);
   }
 
   .weekcontainer > div {
