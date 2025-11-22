@@ -208,13 +208,22 @@
   }
 
   .header {
-    flex-direction: column;
+    flex-direction: row;
     width: 100%;
+    gap: 8px;
+  }
+
+  .seachfield {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .searchbutton {
-    width: 100%;
+    width: auto;
+    min-width: 44px;
     justify-content: center;
+    align-self: stretch;
+    margin-left: 0;
   }
 
   .card {
@@ -224,6 +233,13 @@
 
   .checkbox-group {
     width: 100%;
+  }
+
+  .grouppickerbutton {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 0;
+    font-size: 1.1em;
   }
 }
 
