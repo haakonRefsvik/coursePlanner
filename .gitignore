@@ -22,4 +22,4 @@
 # Databases
 *.db
 
-*GORMFEEDBACK.md
+/frontend/GORMFEEDBACK.MD
