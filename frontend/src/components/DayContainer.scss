@@ -1,11 +1,11 @@
 .daycontainer {
   position: relative; /* allows absolute positioning inside */
-  width: 200px;
   overflow: visible;
 }
 
 .hour {
-  height: 50px; /* fixed height for each hour */
+  height: 50px; /* fixed height for each hour */;
+  color: gray;
   border-top: 1px solid gray;
   border-left: 1px dashed gray;
   padding: 8px;

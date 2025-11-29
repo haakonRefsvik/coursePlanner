@@ -342,7 +342,7 @@ function MainPage() {
           ></CourseOverview>
         </div>
 
-        <div>
+        <div className="calendar">
           <WeekSelector
             collidingWeeks={collidingWeeks}
             weeks={allWeekNr}

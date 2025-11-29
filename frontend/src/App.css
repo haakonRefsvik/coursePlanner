@@ -24,13 +24,13 @@
 }
 
 .searchbutton {
-  display: flex;
   height: 100%;
+  display: flex;
   align-items: center;
-  padding: 10px;
 }
 
 .seachfield {
+  flex: 1;           /* grow to fill remaining space */
   position: relative; /* make parent the positioning context */
 }
 
@@ -103,6 +103,27 @@
   flex-direction: row;
 }
 
+/* Mobile layout */
+@media (max-width: 768px) {
+  .card {
+    flex-direction: column;   /* stack vertically */
+  }
+
+  .dashboard {
+    margin-right: 0;          /* remove right margin */
+    width: 100%;
+    font-size: larger;
+  }
+
+  .calendar {
+    font-size: larger;
+    order: -1;
+    margin-left: 0;
+    width: 100%;              /* make calendar fit mobile */
+    margin-bottom: 50px;
+  }
+}
+
 .header {
   display: flex;
   align-items: flex-start;
@@ -125,11 +146,17 @@
   margin-right: 50px;
 }
 
+.calendar{
+  margin-left: 0px;
+}
+
 .checkbox-group {
   display: flex;
   flex-direction: column;
   align-items: baseline;
   gap: 10px;
+  white-space: nowrap;
+
 
   label {
     display: flex;

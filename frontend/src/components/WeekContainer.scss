@@ -1,10 +1,14 @@
 .weekcontainer {
   display: flex;
-  flex-direction: row;
-  align-items: flex-end;
+  align-items: stretch;   // default, but ensure it
+  height: 100%;           // or a fixed height
 
   .date {
     color: gray;
     font-weight: 300;
+    width:90%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;   /* ← required */
   }
 }

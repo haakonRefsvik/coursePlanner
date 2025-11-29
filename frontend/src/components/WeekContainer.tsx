@@ -1,16 +1,38 @@
-import { useState } from "react";
+
 import type { Event } from "../types/Course";
-import { formatDateToDayMonth, getDatesForWeek } from "../utils/parseDate";
+import { getDatesForWeek } from "../utils/parseDate";
 import { DayContainer } from "./DayContainer";
 import { HourTicks } from "./HourTicks";
 import "./WeekContainer.scss";
 import { toggleSimilarEvents } from "../utils/toggleSImilarEvents";
+import { useState, useEffect } from "react";
 
 type WeekContainerProps = {
   weekNumber: number;
   events: Event[] | undefined;
   onChange: () => void;
 };
+
+
+export function useMediaQuery(query: string) {
+  const [matches, setMatches] = useState(() =>
+    window.matchMedia(query).matches
+  );
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia(query);
+
+    // Update state on change
+    const handler = () => setMatches(mediaQuery.matches);
+    mediaQuery.addEventListener("change", handler);
+
+    return () => mediaQuery.removeEventListener("change", handler);
+  }, [query]);
+
+  return matches;
+}
+
+
 
 export function WeekContainer({
   weekNumber,
@@ -19,6 +41,12 @@ export function WeekContainer({
 }: WeekContainerProps) {
   const dates = getDatesForWeek(2025, weekNumber);
   const [_, forceUpdate] = useState(0);
+
+  const isMobile = useMediaQuery("(max-width: 768px)");
+  console.log(isMobile)
+  const pixelHeight = isMobile ? 70 : 70;
+  const pixelWidth = isMobile ? 90 : 140;
+
 
   function handleDisable(event: Event) {
     toggleSimilarEvents(event, events ?? []);
@@ -30,16 +58,18 @@ export function WeekContainer({
     <>
       <div className="weekcontainer">
         <div>
-          <HourTicks from={8} to={17}></HourTicks>
+          <p className="date"> _</p>
+          <HourTicks from={8} to={17} width={50} height={pixelHeight}></HourTicks>
         </div>
         {dates.map((date) => (
           <div key={date}>
-            <p className="date">{formatDateToDayMonth(date)}</p>
             <DayContainer
               key={date}
               allEvents={events ?? []}
               date={date}
               onDisable={handleDisable}
+              hourPixelHeight={pixelHeight}
+              dayPixelWidth={pixelWidth}
             ></DayContainer>
           </div>
         ))}
