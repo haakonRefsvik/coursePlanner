@@ -52,9 +52,6 @@ export function isDifferentDay(
 ): boolean {
   const dA = safeDate(dateA)
   const dB = safeDate(dateB);
-
-  console.log(dA)
-
   return (
     dA.getFullYear() !== dB.getFullYear() ||
     dA.getMonth() !== dB.getMonth() ||

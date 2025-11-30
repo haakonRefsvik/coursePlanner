@@ -112,8 +112,9 @@
     flex-direction: column;   /* stack vertically */
   }
 
+
   .dashboard {
-    margin-right: 0;          /* remove right margin */
+    margin-right: 0;          /* remove right margin */ 
     width: 100%;
     font-size: larger;
   }
@@ -125,6 +126,8 @@
     width: 100%;              /* make calendar fit mobile */
     margin-bottom: 50px;
   }
+
+  
 }
 
 .header {

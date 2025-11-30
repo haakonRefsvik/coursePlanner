@@ -32,4 +32,10 @@
       color: white;
     }
   }
+  @media (max-width: 768px) {
+    button {
+      font-size: medium;
+    }
+  /* Mobile layout */
+  }
 }
