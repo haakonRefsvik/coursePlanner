@@ -1,6 +1,6 @@
 import type { Event } from "../types/Course";
 import { getCollisionList } from "./getCollisionList";
-import { isDifferentDay } from "./parseDate";
+import { isDifferentDay, safeDate } from "./parseDate";
 const allPartiesMap = new Map<string, Party>();
 // {"IN1020:4": ["IN1000:1", "IN2010:2", ...]}
 // party: list of parties its compatible with
@@ -94,9 +94,9 @@ export function fitParties(events: Event[]): string[] {
   }
 
   events.sort((a, b) => {
-    const da = new Date(a.dtstart);
+    const da = safeDate(a.dtstart);
     da.setHours(0, 0, 0, 0);
-    const db = new Date(b.dtstart);
+    const db = safeDate(b.dtstart);
     db.setHours(0, 0, 0, 0);
     return da.getTime() - db.getTime();
   });
@@ -111,6 +111,7 @@ export function fitParties(events: Event[]): string[] {
     // Add to courseParties
     courseParties.get(party.course)?.push(party.id);
   }
+
   removeCollidingParties(events);
   // edge case: there is only one course with parties
   if (courseParties.size == 1) {

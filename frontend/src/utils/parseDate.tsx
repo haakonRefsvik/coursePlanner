@@ -19,24 +19,41 @@ export function parseDate(isoString: string): string {
 
 // Fix timezone offsets:
 // +01 -> +01:00, +0100 -> +01:00
-export function safeDate(dateStr: string): Date {
-  const safeStr = dateStr
-    .replace(/([+-]\d{2})(\d{2})$/, "$1:$2") // +0100 → +01:00
-    .replace(/([+-]\d{2})$/, "$1:00"); // +01   → +01:00
+export function safeDate(input: string): Date {
+  let s = input.trim();
 
-  return new Date(safeStr);
+  // Case 1: YYYY-MM-DD → append T00:00:00
+  if (/^\d{4}-\d{2}-\d{2}$/.test(s)) {
+    s = s + "T00:00:00";
+  }
+
+  // Case 2: +HHMM → +HH:MM
+  s = s.replace(/([+-]\d{2})(\d{2})$/, "$1:$2");
+
+  // Case 3: +HH → +HH:00
+  s = s.replace(/([+-]\d{2})$/, "$1:00");
+
+  // Case 4: if no timezone → assume UTC
+  if (!/[+-]\d{2}:\d{2}$/.test(s) && !s.endsWith("Z")) {
+    s += "Z";
+  }
+
+  return new Date(s);
 }
+
 
 export function getHoursOnlyLiteral(isoString: string): string {
   return isoString.split("T")[1].slice(0, 5); // "14:15"
 }
 
 export function isDifferentDay(
-  dateA: string | Date,
-  dateB: string | Date
+  dateA: string,
+  dateB: string
 ): boolean {
-  const dA = new Date(dateA);
-  const dB = new Date(dateB);
+  const dA = safeDate(dateA)
+  const dB = safeDate(dateB);
+
+  console.log(dA)
 
   return (
     dA.getFullYear() !== dB.getFullYear() ||

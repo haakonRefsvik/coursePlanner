@@ -43,7 +43,6 @@ export function WeekContainer({
   const [_, forceUpdate] = useState(0);
 
   const isMobile = useMediaQuery("(max-width: 768px)");
-  console.log(isMobile)
   const pixelHeight = isMobile ? 70 : 70;
   const pixelWidth = isMobile ? 90 : 140;
 
