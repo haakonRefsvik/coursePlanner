@@ -44,7 +44,7 @@ export function WeekContainer({
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const pixelHeight = isMobile ? 70 : 70;
-  const pixelWidth = isMobile ? 90 : 140;
+  const pixelWidth = isMobile ? 110 : 140;
 
 
   function handleDisable(event: Event) {

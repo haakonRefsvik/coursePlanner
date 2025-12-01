@@ -25,17 +25,7 @@
     @extend .button-common;
     margin-left: 10px;
     margin-right: 15px;
-  }
-  .dropdownbutton {
-    @extend .button-common;
-
-    transition:
-      transform 0.3s ease,
-      color 0.3s ease;
-
-    &.toggled {
-      transform: rotate(180deg);
-    }
+    font-size: larger;
   }
 
   .coursetext {
@@ -51,8 +41,23 @@
     height: 70%;
     border-radius: var(--container-radius);
   }
-}
+  @media (max-width: 768px) {
+    .coursetext {
+      font-size: larger;
+    }
 
+    .closebutton {
+      font-size: x-large;
+      cursor: pointer;
+    }
+  }
+}
 .coursestatustext {
   text-align: left;
+}
+
+@media (max-width: 768px) {
+  .coursestatustext {
+    font-size: larger;
+  }
 }

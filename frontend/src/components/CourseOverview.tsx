@@ -74,7 +74,6 @@ export function CourseOverview({
             ></div>
             <div className="coursetext">{course.id}</div>
             <IoIosRemoveCircleOutline
-              size={20}
               className="closebutton"
               onClick={() => onRemoveCOurse(course.id)}
             />
@@ -93,7 +92,6 @@ export function CourseOverview({
             ></div>
             <div className="coursetext">{course.id}</div>
             <IoIosRemoveCircleOutline
-              size={20}
               className="closebutton"
               onClick={() => onRemoveCOurse(course.id)}
             />
@@ -112,7 +110,6 @@ export function CourseOverview({
             ></div>
             <div className="coursetext">{course.id}</div>
             <IoIosRemoveCircleOutline
-              size={20}
               className="closebutton"
               onClick={() => onRemoveCOurse(course.id)}
             />
@@ -136,7 +133,6 @@ export function CourseOverview({
             ></div>
             <div className="coursetext">{course.id}</div>
             <IoIosRemoveCircleOutline
-              size={20}
               className="closebutton"
               onClick={() => onRemoveCOurse(course.id)}
             />

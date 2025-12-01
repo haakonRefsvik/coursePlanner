@@ -49,7 +49,7 @@
 .suggestion {
   display: flex;
   flex-direction: row;
-  margin-left: -40px;
+  margin-left: -40px !important;
   height: 50px;
   gap: 10px;
   background-color: var(--container-hover-color);
@@ -112,10 +112,8 @@
     flex-direction: column;   /* stack vertically */
   }
 
-
   .dashboard {
-    margin-right: 0;          /* remove right margin */ 
-    width: 100%;
+    margin-right: 0 !important;          /* remove right margin */ 
     font-size: larger;
   }
 

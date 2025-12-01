@@ -153,7 +153,7 @@ function MainPage() {
       const color = getNextColor(id);
       newCourse.events.forEach((e) => (e.color = color));
     } catch (err) {
-      showToast("Det skjedde en feil");
+      showToast("Emnet kunne ikke hentes");
       console.log(err);
     } finally {
       setLoading(false);
