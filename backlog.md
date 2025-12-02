@@ -1,3 +1,1 @@
-- Weekselector needs to be a carousel on phone
-- When elements stack horizontally on the last day of the week, it makes the calendar smaller
-    - Because the tooltip of the right-most elements 
+- Avoid hard coding the width of the week-selector carousel

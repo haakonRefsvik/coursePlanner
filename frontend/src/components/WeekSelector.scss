@@ -3,13 +3,12 @@
   gap: 4px;
   min-height: calc(1em + 2 * 10px); // font-size + vertical padding
   margin-bottom: 10px;
-  width: 100%;
-
+  
   button {
     @extend button; // inherit all global button styles
     border-radius: var(--container-radius);
     padding-left: 5px;
-
+    min-width: 40px;
     padding-right: 5px;
     font-size: small;
     flex: 1 1 0;
@@ -24,19 +23,51 @@
     &.collision {
       background-color: var(--red-dark);
       color: white;
-      transition: background-color var(--transitions);
+      transition: background-color var(--transitions), transform 120ms;
     }
 
     &.collision-selected {
-      transition: background-color var(--transitions);
+      transition: background-color var(--transitions), transform 120ms;
       background-color: var(--red);
       color: white;
     }
-  }
-  @media (max-width: 768px) {
-    button {
-      font-size: small;
+
+    /* keep keyboard focus visible */
+    &:focus-visible {
+      outline: 2px solid var(--button-hover-border-color);
+      outline-offset: 2px;
     }
-  /* Mobile layout */
+  }
+
+  /* ---- Mobile: horizontal carousel ---- */
+  @media (max-width: 768px) {
+    overflow-x: auto;
+    overflow-y: hidden;
+    width: 550px;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 6px; /* give some breathing room for scrollbar */
+
+    /* nicer scrolling / snap behaviour */
+    scroll-snap-type: x proximity;
+
+    button {
+      /* don't allow buttons to expand to fill row on mobile */
+      flex: 0 0 auto;
+      min-width: 50px;
+      scroll-snap-align: center;
+      display: inline-flex; /* ensure correct shrink/grow behavior */
+      align-items: center;
+      justify-content: center;
+      padding-left: 8px;
+      padding-right: 8px;
+      font-size: large;
+    }
+
+    /* optionally hide native scrollbar (webkit) */
+    &::-webkit-scrollbar {
+      display: none;
+    }
+    /* For other UAs, you can style thin scrollbar if desired */
   }
 }

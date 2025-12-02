@@ -112,6 +112,10 @@
     flex-direction: column;   /* stack vertically */
   }
 
+  .seachbox{
+    -webkit-text-size-adjust: 100%; /* prevent iOS from auto-scaling */
+  }
+
   .searchbutton{
     font-size: larger;
   }
@@ -136,6 +140,8 @@
     width: 100%;              /* make calendar fit mobile */
     margin-bottom: 50px;
   }
+
+
 
   
 }
