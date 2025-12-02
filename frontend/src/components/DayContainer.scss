@@ -41,33 +41,32 @@
   }
 
   .event-tooltip {
-    visibility: hidden;
-    width: max-content;
-    max-width: 200px;
-    background-color: rgba(0, 0, 0, 0.6);
-    color: #fff;
+    position: absolute;
     top: 105%;
+    max-width: var(--tooltip-width);
+    width: max-content;
+
+    --tooltip-width: 200px; // matches max-width
+
+    /* Center tooltip but prevent overflow on right */
+    left: clamp(
+      0px,                                  /* never go past left edge */
+      50%,                                  /* normal center */
+      calc(100% - var(--tooltip-width))     /* never go past right edge */
+    );
+
+    transform: translateX(-50%);
+    white-space: normal;
     text-align: left;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
     padding: 6px 8px;
     border-radius: 4px;
-    position: absolute;
     z-index: 1000;
-    overflow: visible;
 
+    visibility: hidden;
     opacity: 0;
-    pointer-events: none; // avoid blocking mouse
-    white-space: nowrap;
-
-    &::after {
-      content: "";
-      position: absolute;
-      top: 50%;
-      left: -5px; // arrow pointing left
-      transform: translateY(-50%);
-      border-width: 5px;
-      border-style: solid;
-      border-color: transparent rgba(0, 0, 0, 0.6) transparent transparent;
-    }
+    transition: opacity 0.15s ease;
   }
 
   &:hover .event-tooltip {

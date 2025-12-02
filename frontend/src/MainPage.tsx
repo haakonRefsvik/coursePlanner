@@ -292,7 +292,7 @@ function MainPage() {
               className="searchbutton"
               onClick={() => addCourse(courseInput)}
             >
-              <IoMdAdd size={15} />
+              <IoMdAdd />
             </button>
           </div>
           <SemesterSelector

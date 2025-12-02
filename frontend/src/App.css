@@ -112,6 +112,18 @@
     flex-direction: column;   /* stack vertically */
   }
 
+  .searchbutton{
+    font-size: larger;
+  }
+
+  .seachfield{
+    font-size: larger;
+  }
+
+  .grouppickerbutton{
+    font-size: larger;
+  }
+
   .dashboard {
     margin-right: 0 !important;          /* remove right margin */ 
     font-size: larger;

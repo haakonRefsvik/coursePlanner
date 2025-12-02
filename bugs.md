@@ -1,3 +1,0 @@
-- http://localhost:5173/?semester=25h&courses=IN1020%3A4%2CIN1000%3A5%2CIN4120%3A1
-    - 'Auto choose group' button chooses colliding groups sometimes
-    - This only happens in Chrome, not Safari
