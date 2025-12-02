@@ -116,6 +116,18 @@
     -webkit-text-size-adjust: 100%; /* prevent iOS from auto-scaling */
   }
 
+  .checkbox-group{
+
+    label {
+      font-size: larger !important
+    }
+  
+    input[type="checkbox"] {
+      width: 40px !important; 
+      height: 40px !important;
+    }
+  }
+
   .searchbutton{
     font-size: larger;
   }
