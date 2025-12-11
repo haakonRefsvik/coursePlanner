@@ -16,6 +16,7 @@ import { Toast } from "./components/Toast";
 import { SemesterSelector } from "./components/SemesterSelector";
 import { useCourseParties } from "./utils/useCoursesParties";
 import { IsSelectedWeekValid, getWeeksFromTo } from "./utils/getWeeksFromTo";
+import { getNextSemester } from "./utils/getSemesterString";
 
 function MainPage() {
   const [courseInput, setCourseInput] = useState("");
@@ -41,6 +42,7 @@ function MainPage() {
   const showToast = (msg: string) => {
     setToastMessage(msg);
   };
+
 
   useEffect(() => {
     const initialCourses = courses; // from URL once
@@ -136,6 +138,7 @@ function MainPage() {
 
       setLoading(true);
       var newCourse = await fetchCourse(id, semester);
+
 
       if (semester !== newCourse.semester && coursesAdded.length != 0) {
         showToast("Du kan ikke velge kurs fra forskjellige semestre");
@@ -297,14 +300,14 @@ function MainPage() {
           </div>
           <SemesterSelector
             disabled={disableSemesterSelector}
-            year={25}
+            year={getNextSemester()}
             value={semester}
             onChange={setSemester}
           />
           <div className="checkbox-group">
             <button onClick={() => handleParties()}>
               <div className="grouppickerbutton">
-                <FaDice size={20} />
+                <FaDice/>
                 Auto velg grupper
               </div>
             </button>
@@ -350,6 +353,7 @@ function MainPage() {
             onChange={(week) => setWeekSelected(week)}
           ></WeekSelector>
           <WeekContainer
+            semester={semester}
             weekNumber={weekSelected}
             onChange={() => setWeekEventsChanged((n) => n + 1)}
             events={filteredEvents}

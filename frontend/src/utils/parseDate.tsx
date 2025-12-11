@@ -90,3 +90,12 @@ export function formatDateToDayMonth(dateString: string): string {
     month: "long",
   });
 }
+
+export function getCurrentYear() {
+  return new Date().getFullYear();
+}
+
+export function getCurrentMonth() {
+  return new Date().getMonth() + 1; // 1–12
+}
+

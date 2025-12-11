@@ -12,7 +12,6 @@ export function getEventsForADay(
     const isSameDay = parseDate(event.dtstart) === isoString;
 
     if (!isSameDay) return false;
-
     if (event.teachingMethod === "Forelesninger" && showLessons) return true;
     if (event.teachingMethod !== "Forelesninger" && showOther) return true;
 

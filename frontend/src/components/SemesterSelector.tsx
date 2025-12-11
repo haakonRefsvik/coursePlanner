@@ -1,4 +1,7 @@
+import { useEffect, useState } from "react";
 import "./SemesterSelector.scss";
+import { getHumanReadableSemester, getSemesterString } from "../utils/getSemesterString";
+import { MdKeyboardDoubleArrowLeft, MdKeyboardDoubleArrowRight } from "react-icons/md";
 
 export function SemesterSelector({
   year,
@@ -11,33 +14,42 @@ export function SemesterSelector({
   onChange: (val: string) => void;
   disabled: boolean;
 }) {
+  const [yearSelected, setYearSelected] = useState(year);
+
+  useEffect(() => {
+    if(!disabled){
+      onChange(getSemesterString(yearSelected))
+    }
+  }, [yearSelected])
+
+  
   return (
     <div className="selector">
       <button
         className={`
           selectorbutton ${disabled ? "disabled" : ""}
-          selectorbutton ${value.includes("v") ? "selected" : ""}
           `}
+
         onClick={() => {
-          if (!disabled) {
-            onChange(year + "v");
-          }
+          setYearSelected(prev => prev - 0.5)
         }}
       >
-        Vår
+        {<MdKeyboardDoubleArrowLeft />}
       </button>
+      <div className="semesterlabelcontainer">
+        <p className="label">
+        {getHumanReadableSemester(yearSelected)}
+        </p>
+      </div>
       <button
         className={`
           selectorbutton ${disabled ? "disabled" : ""}
-          selectorbutton ${value.includes("h") ? "selected" : ""}
           `}
         onClick={() => {
-          if (!disabled) {
-            onChange(year + "h");
-          }
+          setYearSelected(prev => prev + 0.5)
         }}
       >
-        Høst
+        {<MdKeyboardDoubleArrowRight />}
       </button>
     </div>
   );

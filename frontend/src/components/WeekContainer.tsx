@@ -1,6 +1,6 @@
 
 import type { Event } from "../types/Course";
-import { getDatesForWeek } from "../utils/parseDate";
+import { getCurrentYear, getDatesForWeek } from "../utils/parseDate";
 import { DayContainer } from "./DayContainer";
 import { HourTicks } from "./HourTicks";
 import "./WeekContainer.scss";
@@ -8,6 +8,7 @@ import { toggleSimilarEvents } from "../utils/toggleSImilarEvents";
 import { useState, useEffect } from "react";
 
 type WeekContainerProps = {
+  semester: string;
   weekNumber: number;
   events: Event[] | undefined;
   onChange: () => void;
@@ -35,17 +36,18 @@ export function useMediaQuery(query: string) {
 
 
 export function WeekContainer({
+  semester,
   weekNumber,
   events,
   onChange,
-}: WeekContainerProps) {
-  const dates = getDatesForWeek(2025, weekNumber);
+}: WeekContainerProps) {  
+  const semesterYear = parseInt(getCurrentYear().toString().substring(0, 2) + semester.replace("v", "").replace("h", ""))
+  const dates = getDatesForWeek(semesterYear, weekNumber);
   const [_, forceUpdate] = useState(0);
 
   const isMobile = useMediaQuery("(max-width: 768px)");
   const pixelHeight = isMobile ? 70 : 70;
-  const pixelWidth = isMobile ? 100 : 140;
-
+  const pixelWidth = isMobile ? 100 : 160;
 
   function handleDisable(event: Event) {
     toggleSimilarEvents(event, events ?? []);

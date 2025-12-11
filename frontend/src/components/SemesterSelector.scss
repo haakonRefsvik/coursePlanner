@@ -3,12 +3,31 @@
     flex-direction: row;
     gap: 5px;
     margin-bottom: 20px;
+    height: 40px;
+}
+
+.semesterlabelcontainer{
+    background-color: var(--gray-darker );
+    border-radius: var(--container-radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50%;
+
+    
+    .label{
+        margin: 0;
+        padding: 0;
+    }
 }
 
 .selectorbutton{
     padding: 7px;
-    width: 100%;
-    font-size: smaller;
+    width: 25%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    font-size: larger;
 
     &.selected{
         background-color: var(--button-hover-color);
@@ -24,6 +43,12 @@
 }
 
 @media (max-width: 768px) {
+    .selector{
+        height: 50px;
+    }
+    .semesterlabelcontainer{
+        font-size: larger;
+    }
     .selectorbutton{
       font-size: larger;
     }
