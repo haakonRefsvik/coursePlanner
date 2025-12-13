@@ -21,6 +21,9 @@ export function SemesterSelector({
   
   const [yearSelected, setYearSelected] = useState(initSemester);
 
+  function changeSemester(difference: number){
+    if(!disabled && (yearSelected + difference) >= 0 && yearSelected < 99){setYearSelected(prev => prev +difference)}
+  }
   useEffect(() => {
     setYearSelected(initSemester)
   }, [value])
@@ -39,7 +42,7 @@ export function SemesterSelector({
           `}
 
         onClick={() => {
-          !disabled && setYearSelected(prev => prev - 0.5)
+          changeSemester(-0.5)
         }}
       >
         {<MdKeyboardDoubleArrowLeft />}
@@ -54,7 +57,7 @@ export function SemesterSelector({
           selectorbutton ${disabled ? "disabled" : ""}
           `}
         onClick={() => {
-          !disabled && setYearSelected(prev => prev + 0.5)
+          changeSemester(+0.5)
         }}
       >
         {<MdKeyboardDoubleArrowRight />}
