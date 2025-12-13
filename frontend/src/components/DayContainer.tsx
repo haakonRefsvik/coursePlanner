@@ -5,7 +5,7 @@ import { groupNonOverlappingEvents } from "../utils/groupNonOverlappingEvents";
 import { GoStack } from "react-icons/go";
 import { getEventsForADay } from "../utils/getEventsForADay";
 import { isColliding } from "../utils/isColliding";
-import { formatDateToDayMonth, safeDate } from "../utils/parseDate";
+import { formatDateToDayMonth, formatDateToWeekday, safeDate } from "../utils/parseDate";
 
 type DayContainerProps = {
   allEvents: Event[];
@@ -29,7 +29,8 @@ export function DayContainer({
 
   return (
     <div style={{ width: `${dayPixelWidth}px` }}>
-      <p className="date">{formatDateToDayMonth(date)}</p>
+
+      <p className="date">{formatDateToWeekday(date)} {formatDateToDayMonth(date)} </p>
       <div className="daycontainer" style={{ width: `${dayPixelWidth}px` }}>
         {hours.map((hour, index) => (
           <div

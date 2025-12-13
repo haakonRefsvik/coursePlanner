@@ -87,7 +87,15 @@ export function formatDateToDayMonth(dateString: string): string {
   // Format as "25. august" in Norwegian
   return date.toLocaleDateString("no-NO", {
     day: "numeric",
-    month: "long",
+    month: "short",
+  });
+}
+
+export function formatDateToWeekday(dateString: string): string{
+  const date = new Date(dateString + "T00:00:00");
+
+  return date.toLocaleDateString("nb-NO", {
+    weekday: "short",
   });
 }
 

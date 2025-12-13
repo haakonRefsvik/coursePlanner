@@ -130,8 +130,8 @@ function MainPage() {
         showToast("Du kan ikke legge til mer enn 10 emner");
         return;
       }
-
-      if (coursesAdded.map((course) => course.id).includes(id)) {
+      
+      if (coursesAdded.map((course) => course.id.toLowerCase()).includes(id.toLowerCase())) {
         showToast("Du kan ikke legge til det samme emne flere ganger");
         return;
       }
@@ -139,9 +139,12 @@ function MainPage() {
       setLoading(true);
       var newCourse = await fetchCourse(id, semester);
 
-
+      if(newCourse.events.length === 0){
+        showToast("Emnet hadde ingen hendelser")
+        return;
+      }
       if (semester !== newCourse.semester && coursesAdded.length != 0) {
-        showToast("Du kan ikke velge kurs fra forskjellige semestre");
+        showToast("Du kan ikke velge emner fra forskjellige semestre");
         return;
       }
 

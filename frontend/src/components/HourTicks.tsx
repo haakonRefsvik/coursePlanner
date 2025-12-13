@@ -7,6 +7,7 @@ export function HourTicks({ from, to, width, height }: { from: number; to: numbe
     <div className="daycontainer" style={{ width: `${width}px` }}>
       {hours.map((hour, _) => (
         <div
+          key={hour}
           className="hourticks"
           style={{
             height: `${height}px`,

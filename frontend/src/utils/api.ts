@@ -12,12 +12,13 @@ export async function fetchCourse(
   }
 
   const data = await res.json();
+  const eventsArray = Array.isArray(data.events) ? data.events : [];
 
   const course: Course = {
     id: data.id,
     name: data.name,
     semester: data.semester,
-    events: data.events.map(
+    events: eventsArray.map(
       (e: any): Event => ({
         id: e.id,
         disabled: false,

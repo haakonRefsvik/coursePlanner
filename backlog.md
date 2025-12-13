@@ -1,7 +1,2 @@
-- Avoid hard coding the width of the week-selector carousel
-- Add the posibility of searching on a spesific year in addition to semester (26, 27...)
-    - Default year is:
-        if month > 10:
-            default = current year + 1
-        else:
-            default = current year
+- Fjern mulighet å legge til samme kurs flere ganger
+- La det stå (mon. 23. des) istedet for kun dato
