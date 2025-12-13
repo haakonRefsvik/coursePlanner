@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import fetch from "node-fetch";
 import dotenv from "dotenv";
 import { initDB } from "./db/cache";
 import { fetchCourse } from "./fetchCourse";

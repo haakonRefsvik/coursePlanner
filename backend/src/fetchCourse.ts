@@ -1,5 +1,3 @@
-import fetch from "node-fetch";
-
 export async function fetchCourse(id: string, semester: string) {
   const response = await fetch(
     `https://gw-uio.intark.uh-it.no/tp-uio/ws/1.4/open/?type=course&id=${id}&sem=${semester}`,
