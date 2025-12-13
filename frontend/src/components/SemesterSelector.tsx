@@ -14,14 +14,22 @@ export function SemesterSelector({
   onChange: (val: string) => void;
   disabled: boolean;
 }) {
-  const [yearSelected, setYearSelected] = useState(year);
+  let initSemester = (parseInt(value.replace("h", "").replace("v", "")))
+  if(value.includes("h")){
+    initSemester += 0.5
+  }
+  
+  const [yearSelected, setYearSelected] = useState(initSemester);
+
+  useEffect(() => {
+    setYearSelected(initSemester)
+  }, [value])
 
   useEffect(() => {
     if(!disabled){
       onChange(getSemesterString(yearSelected))
     }
   }, [yearSelected])
-
   
   return (
     <div className="selector">

@@ -16,7 +16,7 @@ import { Toast } from "./components/Toast";
 import { SemesterSelector } from "./components/SemesterSelector";
 import { useCourseParties } from "./utils/useCoursesParties";
 import { IsSelectedWeekValid, getWeeksFromTo } from "./utils/getWeeksFromTo";
-import { getNextSemester } from "./utils/getSemesterString";
+import { getHumanReadableSemester, getNextSemester } from "./utils/getSemesterString";
 
 function MainPage() {
   const [courseInput, setCourseInput] = useState("");
@@ -142,6 +142,9 @@ function MainPage() {
       if(newCourse.events.length === 0){
         showToast("Emnet hadde ingen hendelser")
         return;
+      }
+      if (semester !== newCourse.semester && coursesAdded.length === 0){
+        showToast("Fant ikke " + newCourse.id + " for " + semester+ " semesteret, byttet til " + newCourse.semester)
       }
       if (semester !== newCourse.semester && coursesAdded.length != 0) {
         showToast("Du kan ikke velge emner fra forskjellige semestre");
@@ -365,7 +368,7 @@ function MainPage() {
         {toastMessage && (
           <Toast
             message={toastMessage}
-            duration={2000}
+            duration={4000}
             onClose={() => setToastMessage(null)}
           />
         )}
