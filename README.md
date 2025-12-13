@@ -1,5 +1,7 @@
 # CoursePlanner – UiO Kursplanlegger
 
+https://course-planner-nu.vercel.app
+
 **CoursePlanner** er et verktøy for studenter ved Universitetet i Oslo (UiO) som ønsker å planlegge semesteret sitt uten kolliderende kurs og emner. Prosjektet består av en **frontend** (React + Vite) og en **backend** (Express + SQLite), med caching og API-integrasjon.
 
 Backend blir hostet med Railway(Express js) og Frontend blir hostet med Vercel (React + Vite)
