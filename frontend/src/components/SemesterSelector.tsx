@@ -39,7 +39,7 @@ export function SemesterSelector({
           `}
 
         onClick={() => {
-          setYearSelected(prev => prev - 0.5)
+          !disabled && setYearSelected(prev => prev - 0.5)
         }}
       >
         {<MdKeyboardDoubleArrowLeft />}
@@ -54,7 +54,7 @@ export function SemesterSelector({
           selectorbutton ${disabled ? "disabled" : ""}
           `}
         onClick={() => {
-          setYearSelected(prev => prev + 0.5)
+          !disabled && setYearSelected(prev => prev + 0.5)
         }}
       >
         {<MdKeyboardDoubleArrowRight />}
