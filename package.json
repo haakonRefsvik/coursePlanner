@@ -1,9 +1,11 @@
 {
   "devDependencies": {
+    "@types/node-fetch": "^2.6.13",
     "prettier": "^3.6.2",
     "sass": "^1.90.0"
   },
   "dependencies": {
+    "node-fetch": "^3.3.2",
     "react-hot-toast": "^2.6.0",
     "react-loader-spinner": "^6.1.6",
     "react-router-dom": "^6.30.1"
