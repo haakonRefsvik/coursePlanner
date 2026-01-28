@@ -17,6 +17,15 @@ import { SemesterSelector } from "./components/SemesterSelector";
 import { useCourseParties } from "./utils/useCoursesParties";
 import { IsSelectedWeekValid, getWeeksFromTo } from "./utils/getWeeksFromTo";
 import { getNextSemester } from "./utils/getSemesterString";
+import ClipLoader from "react-spinners/ClipLoader";
+import CircleLoader from "react-spinners/CircleLoader";
+import ClockLoader from "react-spinners/ClockLoader";
+import {
+  DotLoader,
+  GridLoader,
+  PropagateLoader,
+  RotateLoader,
+} from "react-spinners";
 
 function MainPage() {
   const [courseInput, setCourseInput] = useState("");
@@ -352,9 +361,6 @@ function MainPage() {
               Annet
             </label>
           </div>
-          <div className="loader-container">
-            {loading ? <p>Laster ...</p> : null}
-          </div>
           <CourseOverview
             courses={coursesAdded}
             onRemoveCOurse={(id) => handleCourseRemoval(id)}
@@ -368,12 +374,25 @@ function MainPage() {
             selectedWeek={weekSelected}
             onChange={(week) => setWeekSelected(week)}
           ></WeekSelector>
-          <WeekContainer
-            semester={semester}
-            weekNumber={weekSelected}
-            onChange={() => setWeekEventsChanged((n) => n + 1)}
-            events={filteredEvents}
-          ></WeekContainer>
+          <div className="loader-container">
+            {loading && (
+              <div className="loader">
+                <PropagateLoader
+                  color={"var(--gray-lightest)"}
+                  loading={true}
+                  size={30}
+                  aria-label="Loading Spinner"
+                  data-testid="loader"
+                />
+              </div>
+            )}
+            <WeekContainer
+              semester={semester}
+              weekNumber={weekSelected}
+              onChange={() => setWeekEventsChanged((n) => n + 1)}
+              events={filteredEvents}
+            ></WeekContainer>
+          </div>
         </div>
         {toastMessage && (
           <Toast

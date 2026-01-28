@@ -31,7 +31,7 @@
 }
 
 .seachfield {
-  flex: 1;           /* grow to fill remaining space */
+  flex: 1; /* grow to fill remaining space */
   position: relative; /* make parent the positioning context */
 }
 
@@ -67,10 +67,10 @@
   gap: 10px;
   display: flex;
   flex-direction: row;
-  justify-content: center; 
+  justify-content: center;
   align-items: center;
   height: 20px;
-  width: 100%
+  width: 100%;
 }
 
 .searchicon {
@@ -109,41 +109,39 @@
 /* Mobile layout */
 @media (max-width: 768px) {
   .card {
-    flex-direction: column;   /* stack vertically */
+    flex-direction: column; /* stack vertically */
   }
 
-  .seachbox{
+  .seachbox {
     -webkit-text-size-adjust: 100%; /* prevent iOS from auto-scaling */
   }
 
-  .checkbox-group{
-
+  .checkbox-group {
     label {
-      font-size: larger !important
+      font-size: larger !important;
     }
-  
+
     input[type="checkbox"] {
-      width: 40px !important; 
+      width: 40px !important;
       height: 40px !important;
     }
   }
 
-
-  .searchbutton{
+  .searchbutton {
     font-size: larger;
   }
 
-  .seachfield{
+  .seachfield {
     font-size: larger;
   }
 
-  .grouppickerbutton{
+  .grouppickerbutton {
     font-size: x-large;
     height: 40px;
   }
 
   .dashboard {
-    margin-right: 0 !important;          /* remove right margin */ 
+    margin-right: 0 !important; /* remove right margin */
     font-size: larger;
   }
 
@@ -151,13 +149,9 @@
     font-size: larger;
     order: -1;
     margin-left: 0;
-    width: 100%;              /* make calendar fit mobile */
+    width: 100%; /* make calendar fit mobile */
     margin-bottom: 50px;
   }
-
-
-
-  
 }
 
 .header {
@@ -168,11 +162,25 @@
 }
 
 .loader-container {
-  height: 20px;
+  position: relative;
   display: flex;
-  align-items: center;
   justify-content: center;
-  color: gray;
+  align-items: center;
+}
+
+.loader {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+  background-color: rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 .dashboard {
@@ -181,11 +189,11 @@
   margin-right: 50px;
 }
 
-.calendar{
+.calendar {
   margin-left: 0px;
 }
 
-.checkbox-group button{
+.checkbox-group button {
   width: 100%;
   margin-bottom: 10px;
 }
