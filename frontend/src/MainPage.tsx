@@ -17,15 +17,7 @@ import { SemesterSelector } from "./components/SemesterSelector";
 import { useCourseParties } from "./utils/useCoursesParties";
 import { IsSelectedWeekValid, getWeeksFromTo } from "./utils/getWeeksFromTo";
 import { getNextSemester } from "./utils/getSemesterString";
-import ClipLoader from "react-spinners/ClipLoader";
-import CircleLoader from "react-spinners/CircleLoader";
-import ClockLoader from "react-spinners/ClockLoader";
-import {
-  DotLoader,
-  GridLoader,
-  PropagateLoader,
-  RotateLoader,
-} from "react-spinners";
+import { PropagateLoader } from "react-spinners";
 
 function MainPage() {
   const [courseInput, setCourseInput] = useState("");
