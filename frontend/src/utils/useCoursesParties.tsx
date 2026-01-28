@@ -1,5 +1,6 @@
 import { useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
+import { getNextSemester, getSemesterString } from "./getSemesterString";
 
 type CourseSearch = {
   course: string;
@@ -9,7 +10,8 @@ type CourseSearch = {
 export function useCourseParties() {
   const [searchParams, setSearchParams] = useSearchParams();
 
-  const semester = searchParams.get("semester") ?? "25h";
+  const semester =
+    searchParams.get("semester") ?? getSemesterString(getNextSemester());
   const courses = parseCoursesParam(searchParams.get("courses"));
 
   const setCourses = useCallback(
